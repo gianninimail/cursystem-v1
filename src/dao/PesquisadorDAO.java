@@ -63,7 +63,7 @@ public class PesquisadorDAO implements InterfacePesquisadorDAO {
 
 		ps.setLong(1, _pesquisador.getId());
 		ps.setString(2, _pesquisador.getInstituto());
-		ps.setLong(3, _pesquisador.getEspecialidade().getId());
+		ps.setLong(3, _pesquisador.getIdEspecialidade());
 
 		ps.execute();
 
@@ -85,7 +85,7 @@ public class PesquisadorDAO implements InterfacePesquisadorDAO {
 				+ "dtCadastro, "
 				+ "tipo_usuario, "
 				+ "instituto, "
-				+ "especialidade "
+				+ "especialidade, status, dtStatus "
 				+ "FROM pesquisador, usuario "
 				+ "WHERE pesquisador.id = usuario.id;";
 
@@ -105,6 +105,9 @@ public class PesquisadorDAO implements InterfacePesquisadorDAO {
 
 			String instituto = rs.getString(9);
 			int idEspecialidade = rs.getInt(10);
+			
+			Integer status = rs.getInt(11);
+			Date dtStatus = rs.getDate(12);
 
 			EspecialidadeDAO daoEsp = new EspecialidadeDAO(this.conexao);
 			Especialidade especialidade = daoEsp.PegarPeloID(idEspecialidade);
@@ -112,7 +115,7 @@ public class PesquisadorDAO implements InterfacePesquisadorDAO {
 			TipoUsuarioDAO daoTU = new TipoUsuarioDAO(conexao);
             TipoUsuario tipoUsuario = daoTU.PegarPeloID(idTipoUsuario);
 
-			Pesquisador o = new Pesquisador(id, nome, login, senha, tel, email, dtCadastro, instituto, especialidade, tipoUsuario);
+			Pesquisador o = new Pesquisador(id, nome, login, senha, tel, email, dtCadastro, instituto, especialidade, tipoUsuario, status, dtStatus);
 			
 			listaPesquisadors.add(o);
 		}
@@ -128,7 +131,7 @@ public class PesquisadorDAO implements InterfacePesquisadorDAO {
 		PreparedStatement ps = this.conexao.prepareStatement(comandoU);
 
 		ps.setString(1, _pesquisador.getNome());
-		ps.setString(2, _pesquisador.getLogin());
+		ps.setString(2, _pesquisador.getEmail());
 		ps.setString(3, _pesquisador.getSenha());
 		ps.setString(4, _pesquisador.getTel());
 		ps.setString(5, _pesquisador.getEmail());
@@ -151,6 +154,21 @@ public class PesquisadorDAO implements InterfacePesquisadorDAO {
 	}
 
 	@Override
+	public void EditarExiste(Pesquisador _pesquisador) throws SQLException {
+		
+		String comandoP = "update pesquisador set instituto = ?, especialidade = ? where id = ?";
+
+		PreparedStatement ps = this.conexao.prepareStatement(comandoP);
+		
+		ps.setString(1, _pesquisador.getInstituto());
+		ps.setLong(2, _pesquisador.getEspecialidade().getId());
+		
+		ps.setLong(3, _pesquisador.getId());
+		
+		ps.execute();
+	}	
+	
+	@Override
 	public Long PegarProximoID()throws SQLException {
 
 		Long id = new Long(0);
@@ -169,6 +187,19 @@ public class PesquisadorDAO implements InterfacePesquisadorDAO {
 	}
 
 	@Override
+	public void Aprovar(Pesquisador _pesquisador) throws SQLException {
+
+		String comando = "update usuario set status = 1 where id = ?";
+
+		PreparedStatement ps = this.conexao.prepareStatement(comando);
+
+		ps.setLong(1, _pesquisador.getId());
+
+		ps.execute();
+
+	}	
+	
+	@Override
 	public void Excluir(Pesquisador _pesquisador) throws SQLException {
 
 		String comando = "delete from pesquisador where id = ?";
@@ -178,7 +209,15 @@ public class PesquisadorDAO implements InterfacePesquisadorDAO {
 		ps.setLong(1, _pesquisador.getId());
 
 		ps.execute();
+		
+		comando = "delete from usuario where id = ?";
+		
+		ps = this.conexao.prepareStatement(comando);
 
+		ps.setLong(1, _pesquisador.getId());
+
+		ps.execute();
+		
 	}
 
 	@Override
@@ -196,7 +235,7 @@ public class PesquisadorDAO implements InterfacePesquisadorDAO {
 				+ "dtCadastro, "
 				+ "tipo_usuario, "
 				+ "instituto, "
-				+ "especialidade "
+				+ "especialidade, status, dtStatus "
 				+ "FROM pesquisador, usuario "
 				+ "WHERE pesquisador.id = usuario.id "
 				+ "AND pesquisador.id = ?";
@@ -218,6 +257,8 @@ public class PesquisadorDAO implements InterfacePesquisadorDAO {
 			Long idTipoUsuario = rs.getLong(8);
 			String instituto = rs.getString(9);
 			int idEspecialidade = rs.getInt(10);
+			Integer status = rs.getInt(11);
+			Date dtStatus = rs.getDate(12);
 
 			EspecialidadeDAO daoEsp = new EspecialidadeDAO(this.conexao);
 			Especialidade especialidade = daoEsp.PegarPeloID(idEspecialidade);
@@ -225,7 +266,7 @@ public class PesquisadorDAO implements InterfacePesquisadorDAO {
             TipoUsuarioDAO daoTU = new TipoUsuarioDAO(conexao);
             TipoUsuario tipoUsuario = daoTU.PegarPeloID(idTipoUsuario);
 
-			return new Pesquisador(id, nome, login, senha, tel, email, dtCadastro, instituto, especialidade, tipoUsuario);
+			return new Pesquisador(id, nome, login, senha, tel, email, dtCadastro, instituto, especialidade, tipoUsuario, status, dtStatus);
 		}
 		else {
 			return null;
@@ -240,7 +281,7 @@ public class PesquisadorDAO implements InterfacePesquisadorDAO {
 		
 		try {
 			
-			String comando = "SELECT u.id, u.nome, u.login, u.senha, u.tel, u.email, u.dtCadastro, u.tipo_usuario "
+			String comando = "SELECT u.id, u.nome, u.login, u.senha, u.tel, u.email, u.dtCadastro, u.tipo_usuario, u.status, u.dtStatus "
 					+ "FROM usuario u WHERE u.id NOT IN (SELECT p.id FROM pesquisador p);";
 			
 			PreparedStatement ps = this.conexao.prepareStatement(comando);
@@ -256,11 +297,13 @@ public class PesquisadorDAO implements InterfacePesquisadorDAO {
                 String email = rs.getString(6);
                 Date dtCadastro = rs.getDate(7);
                 Long idTipoUsuario = rs.getLong(8);
+                Integer status = rs.getInt(9);
+                Date dtStatus = rs.getDate(10);
 
                 TipoUsuarioDAO daoTU = new TipoUsuarioDAO(conexao);
                 TipoUsuario tipoUsuario = daoTU.PegarPeloID(idTipoUsuario);
                 
-                listaUsuarios.add(new Usuario(id, nome, login, senha, tel, email, dtCadastro, tipoUsuario));
+                listaUsuarios.add(new Usuario(id, nome, login, senha, tel, email, dtCadastro, tipoUsuario, status, dtStatus));
             }
 			
 		} catch (Exception ex) {
@@ -287,7 +330,7 @@ public class PesquisadorDAO implements InterfacePesquisadorDAO {
 				+ "dtCadastro, "
 				+ "tipo_usuario, "
 				+ "instituto, "
-				+ "especialidade "
+				+ "especialidade, status, dtStatus "
 				+ "FROM pesquisador, usuario "
 				+ "WHERE pesquisador.id = usuario.id "
 				+ "AND (especialidade = 3 "
@@ -311,6 +354,9 @@ public class PesquisadorDAO implements InterfacePesquisadorDAO {
 
 			String instituto = rs.getString(9);
 			int idEspecialidade = rs.getInt(10);
+			
+			Integer status = rs.getInt(11);
+			Date dtStatus = rs.getDate(12);
 
 			EspecialidadeDAO daoEsp = new EspecialidadeDAO(this.conexao);
 			Especialidade especialidade = daoEsp.PegarPeloID(idEspecialidade);
@@ -318,11 +364,67 @@ public class PesquisadorDAO implements InterfacePesquisadorDAO {
 			TipoUsuarioDAO daoTU = new TipoUsuarioDAO(conexao);
             TipoUsuario tipoUsuario = daoTU.PegarPeloID(idTipoUsuario);
 
-			Pesquisador o = new Pesquisador(id, nome, login, senha, tel, email, dtCadastro, instituto, especialidade, tipoUsuario);
+			Pesquisador o = new Pesquisador(id, nome, login, senha, tel, email, dtCadastro, instituto, especialidade, tipoUsuario, status, dtStatus);
 			
 			listaPesquisadors.add(o);
 		}
 
 		return listaPesquisadors;
 	}
+	
+	@Override
+	public List<Pesquisador> listarPesquisadoresPendentes() throws SQLException {
+
+		ResultSet rs = null;
+		List<Pesquisador> listaPesquisadors = new ArrayList<Pesquisador>();
+
+		String comando = "SELECT "
+				+ "pesquisador.id, "
+				+ "usuario.nome, "
+				+ "login, "
+				+ "senha, "
+				+ "tel, "
+				+ "email, "
+				+ "dtCadastro, "
+				+ "tipo_usuario, "
+				+ "instituto, "
+				+ "especialidade, status, dtStatus "
+				+ "FROM pesquisador, usuario "
+				+ "WHERE pesquisador.id = usuario.id "
+				+ "and usuario.status=0;";
+
+		PreparedStatement ps = this.conexao.prepareStatement(comando);
+
+		rs = ps.executeQuery();
+
+		while (rs.next()) {
+			Long id = rs.getLong(1);
+			String nome = rs.getString(2);
+			String login = rs.getString(3);
+			String senha = rs.getString(4);
+			String tel = rs.getString(5);
+			String email = rs.getString(6);
+			Date dtCadastro = rs.getDate(7);
+			Long idTipoUsuario = rs.getLong(8);
+
+			String instituto = rs.getString(9);
+			int idEspecialidade = rs.getInt(10);
+			
+			Integer status = rs.getInt(11);
+			Date dtStatus = rs.getDate(12);
+
+			EspecialidadeDAO daoEsp = new EspecialidadeDAO(this.conexao);
+			Especialidade especialidade = daoEsp.PegarPeloID(idEspecialidade);
+			
+			TipoUsuarioDAO daoTU = new TipoUsuarioDAO(conexao);
+            TipoUsuario tipoUsuario = daoTU.PegarPeloID(idTipoUsuario);
+
+			Pesquisador o = new Pesquisador(id, nome, login, senha, tel, email, dtCadastro, instituto, especialidade, tipoUsuario, status, dtStatus);
+			
+			listaPesquisadors.add(o);
+		}
+
+		return listaPesquisadors;
+	}
+	
 }

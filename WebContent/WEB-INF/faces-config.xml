@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<faces-config
-    xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
-    version="2.2">
+<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
+	version="2.2">
+	<application>
+		<locale-config>
+			<default-locale>pt</default-locale>
+			<supported-locale>en</supported-locale>
+		</locale-config>
+		<resource-bundle>
+			<base-name>com.cursystem.textos</base-name>
+			<var>msg</var>
+		</resource-bundle>
+	</application>
 	<managed-bean>
 		<managed-bean-name>grafoBean</managed-bean-name>
 		<managed-bean-class>controle.GrafoBean</managed-bean-class>
@@ -18,6 +27,11 @@
 		<managed-bean-name>autenticadorBean</managed-bean-name>
 		<managed-bean-class>controle.AutenticadorBean</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>especialidadeBean</managed-bean-name>
+		<managed-bean-class>controle.EspecialidadeBean</managed-bean-class>
+		<managed-bean-scope>view</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>pesquisadorBean</managed-bean-name>

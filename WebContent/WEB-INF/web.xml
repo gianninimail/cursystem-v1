@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
-  
-<!-- TITULO DA APLICAÇÃO -->
   <display-name>CurSystem</display-name>
-  
-<!-- PAGINA INICIAL DA APLICAÇÃO -->
   <welcome-file-list>
-    <welcome-file>index.jsf</welcome-file>
+    <welcome-file>default.jsf</welcome-file>
   </welcome-file-list>
-  
-<!-- CONFIGURAÇÃO DO TEMPO DE DURAÇÃO DA SESSÃO DO USUARIO -->
   <session-config>
-  	<session-timeout>30</session-timeout>
+    <session-timeout>30</session-timeout>
   </session-config>
-  
-<!-- JAVA SERVER FACES -->
   <servlet>
     <servlet-name>Faces Servlet</servlet-name>
     <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
@@ -37,48 +29,13 @@
     <listener-class>com.sun.faces.config.ConfigureListener</listener-class>
   </listener>
   <env-entry>
-	<env-entry-name>jsf/ClientSideSecretKey</env-entry-name>
-	<env-entry-type>java.lang.String</env-entry-type>
-   	<env-entry-value>am9kZXRlcHV0b2hhY2tlcg==</env-entry-value>
-  </env-entry> 
-<!-- FIM DA CONFIGURAÇÃO DO JAVA SERVER FACES -->
-
-<!-- CONFIGURAÇÃO DO TEMA DO PRIMEFACES -->
-  <context-param>  
-    <param-name>primefaces.THEME</param-name>  
-    <param-value>delta</param-value>  
+    <env-entry-name>jsf/ClientSideSecretKey</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>am9kZXRlcHV0b2hhY2tlcg==</env-entry-value>
+  </env-entry>
+  <!-- CONFIGURAÇÃO DO TEMA DO PRIMEFACES -->
+  <context-param>
+    <param-name>primefaces.THEME</param-name>
+    <param-value>bootstrap</param-value>
   </context-param>
-
-<!-- Configurações SPRING SECURITY -->
-<!-- 		<context-param> -->
-<!-- 		      <param-name>contextConfigLocation</param-name> -->
-<!-- 		  **<param-value>/WEB-INF/spring/spring-contextApp.xml</param-value>** --> 
-<!-- 		      <param-value>/WEB-INF/spring/spring-security.xml</param-value> -->
-<!-- 		</context-param> -->
-		
-<!-- 		<listener> -->
-<!-- 		      <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class> -->
-<!-- 		</listener> -->
-		
-<!-- 		<filter> -->
-<!-- 		      <filter-name>springSecurityFilterChain</filter-name> -->
-<!-- 		      <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class> -->
-<!-- 		</filter> -->
-<!-- 		<filter-mapping> -->
-<!-- 		      <filter-name>springSecurityFilterChain</filter-name> -->
-<!-- 		      <url-pattern>/*</url-pattern> -->
-<!-- 		      <dispatcher>REQUEST</dispatcher> -->
-<!--            	  <dispatcher>ERROR</dispatcher> -->
-<!-- 		</filter-mapping> -->
-<!-- Fim Configurações SPRING SECURITY -->
- 
- <!-- CONFIGURAÇÃO DO GRAPHVIZ NO PRIMEFACES -->
-<!--  <filter> -->
-<!--     <filter-name>graphvisFilter</filter-name> -->
-<!--     <filter-class>org.primefaces.component.graphvis.GraphvisFilter</filter-class> -->
-<!--   </filter> -->
-<!--   <filter-mapping> -->
-<!--     <filter-name>graphvisFilter</filter-name> -->
-<!--     <url-pattern>*.swf</url-pattern> -->
-<!--   </filter-mapping> -->
 </web-app>

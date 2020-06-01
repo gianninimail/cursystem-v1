@@ -20,22 +20,26 @@ public class UsuarioDAO implements InterfaceUsuarioDAO {
 	}
 
 	@Override
-	public void Inserir(Usuario _usuario) throws SQLException {
+	public Long Inserir(Usuario _usuario) throws SQLException {
 
-			String comando = "insert into usuario (id, nome, login, senha, tel, email, dtCadastro, tipo_usuario) "
-					+ "values (?, ?, ?, ?, ?, ?, ?, ?)";
+			String comando = "insert into usuario (nome, login, senha, tel, email, dtCadastro, tipo_usuario, status, dtStatus) "
+					+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 					
 			PreparedStatement ps = this.conexao.prepareStatement(comando);
-			ps.setLong(1, _usuario.getId());
-			ps.setString(2, _usuario.getNome());
-			ps.setString(3, _usuario.getLogin());
-			ps.setString(4, _usuario.getSenha());
-			ps.setString(5, _usuario.getTel());
-			ps.setString(6, _usuario.getEmail());
-			ps.setDate(7, new Date(_usuario.getDataCadastro().getTime()));
-			ps.setLong(8, _usuario.getTipoUsuario().getId());
+			//ps.setLong(1, _usuario.getId());
+			ps.setString(1, _usuario.getNome().trim());
+			ps.setString(2, _usuario.getEmail().trim());
+			ps.setString(3, _usuario.getSenha().trim());
+			ps.setString(4, _usuario.getTel().trim());
+			ps.setString(5, _usuario.getEmail().trim());
+			ps.setDate(6, new Date(_usuario.getDataCadastro().getTime()));
+			ps.setLong(7, _usuario.getTipoUsuario().getId());
+			ps.setInt(8, _usuario.getStatus());
+			ps.setDate(9, new Date(_usuario.getDataStatus().getTime()));
 			
-			ps.execute();			
+			ps.execute();	
+			
+			return PegarPeloEmail(_usuario.getEmail()).getId();
 	}
 
 	@Override
@@ -61,11 +65,13 @@ public class UsuarioDAO implements InterfaceUsuarioDAO {
                 String email = rs.getString(6);
                 Date dtCadastro = rs.getDate(7);
                 Long idTipoUsuario = rs.getLong(8);
+                Integer status = rs.getInt(9);
+                Date dtStatus = rs.getDate(10);
                 
                 TipoUsuarioDAO daoTU = new TipoUsuarioDAO(conexao);
                 TipoUsuario tipoUsuario = daoTU.PegarPeloID(idTipoUsuario);
 
-                listaUsuarios.add(new Usuario(id, nome, login, senha, tel, email, dtCadastro, tipoUsuario));
+                listaUsuarios.add(new Usuario(id, nome, login, senha, tel, email, dtCadastro, tipoUsuario, status, dtStatus));
             }
 			
 		} catch (Exception ex) {
@@ -84,7 +90,7 @@ public class UsuarioDAO implements InterfaceUsuarioDAO {
 		PreparedStatement ps = this.conexao.prepareStatement(comando);
 
 		ps.setString(1, _usuario.getNome());
-		ps.setString(2, _usuario.getLogin());
+		ps.setString(2, _usuario.getEmail());
 		ps.setString(3, _usuario.getSenha());
 		ps.setString(4, _usuario.getTel());
 		ps.setString(5, _usuario.getEmail());
@@ -134,11 +140,13 @@ public class UsuarioDAO implements InterfaceUsuarioDAO {
             String email = rs.getString(6);
             Date dtCadastro = rs.getDate(7);
             Long idTipoUsuario = rs.getLong(8);
+            Integer status = rs.getInt(9);
+            Date dtStatus = rs.getDate(10);
             
             TipoUsuarioDAO daoTU = new TipoUsuarioDAO(conexao);
             TipoUsuario tipoUsuario = daoTU.PegarPeloID(idTipoUsuario);
             
-            return new Usuario(id, nome, login, senha, tel, email, dtCadastro, tipoUsuario);
+            return new Usuario(id, nome, login, senha, tel, email, dtCadastro, tipoUsuario, status, dtStatus);
 		}
 		else {
 			return null;
@@ -179,15 +187,51 @@ public class UsuarioDAO implements InterfaceUsuarioDAO {
             String email = rs.getString(6);
             Date dtCadastro = rs.getDate(7);
             Long idTipoUsuario = rs.getLong(8);
+            Integer status = rs.getInt(9);
+            Date dtStatus = rs.getDate(10);
             
             TipoUsuarioDAO daoTU = new TipoUsuarioDAO(conexao);
             TipoUsuario tipoUsuario = daoTU.PegarPeloID(idTipoUsuario);
             
-            return new Usuario(id, nome, login, senha, tel, email, dtCadastro, tipoUsuario);
+            return new Usuario(id, nome, login, senha, tel, email, dtCadastro, tipoUsuario, status, dtStatus);
 		}
 		else {
 			return null;
 		}
 	}
+	
+	@Override
+	public Usuario PegarPeloEmail(String _email) throws SQLException {
+		
+		String comando = "SELECT * FROM usuario WHERE email = ?";
+		
+		PreparedStatement ps = this.conexao.prepareStatement(comando);
+		
+		ps.setString(1, _email);
+
+		ResultSet rs = ps.executeQuery();
+		
+		if (rs.next()) {
+			Long id = rs.getLong(1);
+            String nome = rs.getString(2);
+            String login = rs.getString(3);
+            String senha = rs.getString(4);
+            String tel = rs.getString(5);
+            String email = rs.getString(6);
+            Date dtCadastro = rs.getDate(7);
+            Long idTipoUsuario = rs.getLong(8);
+            Integer status = rs.getInt(9);
+            Date dtStatus = rs.getDate(10);
+            
+            TipoUsuarioDAO daoTU = new TipoUsuarioDAO(conexao);
+            TipoUsuario tipoUsuario = daoTU.PegarPeloID(idTipoUsuario);
+            
+            return new Usuario(id, nome, login, senha, tel, email, dtCadastro, tipoUsuario, status, dtStatus);
+		}
+		else {
+			return null;
+		}
+	}
+	
 	
 }

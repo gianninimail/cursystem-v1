@@ -304,7 +304,7 @@ public class ResolucaoDesafiosBean {
 		try {
 			
 			this.comentario.setDataCadastro(new Date());
-			this.comentario.setResposta(this.respostaSelecionada);
+			//this.comentario.setResposta(this.respostaSelecionada);
 			
 			FabricaConexao fabrica = new FabricaConexao();
 			Connection conexao = fabrica.fazerConexao();

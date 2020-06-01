@@ -19,6 +19,8 @@ public interface InterfaceComentarioDAO {
 	Comentario PegarPeloID(Long _id) throws SQLException;
 
 	List<Comentario> TodasComentariosDaResposta(Resposta _resposta) throws SQLException;
+	
+	List<Comentario> TodosComentariosDaResposta(Long _idResposta) throws SQLException;
 
 	Long PegarID() throws SQLException;
 }

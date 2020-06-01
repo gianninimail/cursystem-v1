@@ -1,0 +1,460 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/n_template.xhtml"
+	xmlns:b="http://bootsfaces.net/ui">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/n_menu.xhtml" />
+	</ui:define>
+
+
+
+	<ui:define name="conteudo">
+		<h:form id="fCadastrar">
+			<b:row>
+				<b:column>
+					<b:well>
+						<h3>#{msg['resposta.desafio']}</h3>
+     		 			#{msg['resposta.desafio.info']}
+    				</b:well>
+				</b:column>
+			</b:row>
+			<b:row>
+				<b:column colSm="6">
+					<b:row>
+						<b:column>
+							<b:inputText label="Id" id="id" value="#{editarDesafio.id}"
+								disabled="true" />
+						</b:column>
+					</b:row>
+					<b:row>
+						<b:column>
+							<b:inputText label="#{msg['desafio.titulo']}" id="nome"
+								value="#{editarDesafio.titulo}" maxlength="49" disabled="true" />
+						</b:column>
+					</b:row>
+					<b:row>
+						<b:column>
+							<b:inputTextarea label="#{msg['desafio.descricao']}" id="desc"
+								value="#{editarDesafio.desc}" rows="6" cols="45" disabled="true" />
+						</b:column>
+					</b:row>
+				</b:column>
+
+				<b:column colSm="6">
+					<b:row>
+						<b:column>
+							<b:inputText label="#{msg['desafio.status']}" id="status"
+								value="#{editarDesafio.status.nome}" disabled="true" />
+						</b:column>
+					</b:row>
+					<b:row id="selectEspecialidade">
+						<b:column>
+							<b:selectOneMenu label="#{msg['especialidade']}"
+								id="especialidade" converter="especialidadeConverter"
+								value="#{editarDesafio.especialidade}" disabled="true">
+								<f:selectItems value="#{desafioBean.especialidades}" var="esp"
+									itemValue="#{esp}" itemLabel="#{esp.nome}" />
+								<f:ajax
+									listener="#{desafioBean.FiltrarPesquisadoresEditar(editarDesafio)}"
+									render="usuario" />
+							</b:selectOneMenu>
+						</b:column>
+					</b:row>
+					<b:row>
+						<b:column>
+							<b:selectOneMenu label="#{msg['dono']}" id="usuario"
+								converter="usuarioConverter" value="#{editarDesafio.usuario}"
+								disabled="true">
+								<f:selectItem itemLabel="#{editarDesafio.usuario.nome}"
+									itemValue="#{editarDesafio.usuario}" />
+								<f:selectItems value="#{editarListaPesquisadores}"
+									var="pesquisador" itemValue="#{pesquisador}"
+									itemLabel="#{pesquisador.nome}" />
+							</b:selectOneMenu>
+						</b:column>
+					</b:row>
+				</b:column>
+
+			</b:row>
+			<br />
+			<b:row>
+				<b:column>
+					<b:well>
+						<h3>#{msg['resposta.lista']}</h3>
+     		 			#{msg['resposta.lista.info']}
+    				</b:well>
+				</b:column>
+			</b:row>
+
+			<b:dataTable value="#{editarDesafio.respostas}" var="resposta">
+				<b:dataTableColumn>
+					<f:facet name="header">
+						<ul
+							style="margin-bottom: 0; list-style-type: none; padding-left: 0">
+							<li>Id</li>
+						</ul>
+					</f:facet>
+					#{resposta.id}
+					<b:image rendered="#{resposta.status}" styleClass="iconeValidacao"
+						value="#{resource['imagens/iconValidation.png']}" height="30"
+						width="40" tooltip="#{msg['resposta.validada']}" />
+				</b:dataTableColumn>
+				<b:dataTableColumn label="#{msg['pesquisador']}"
+					value="#{resposta.pesquisador.nome}" />
+				<b:dataTableColumn>
+					<f:facet name="header">
+						<ul
+							style="margin-bottom: 0; list-style-type: none; padding-left: 0">
+							<li>#{msg['resposta.titulo']}</li>
+							<li>#{msg['resposta.descricao']}</li>
+						</ul>
+					</f:facet>
+					<b><h:outputText value="#{resposta.titulo}"
+							styleClass="#{(resposta.status) ? 'fontListaDesafiosValidados' : ''}" /></b>
+					<br />
+					#{resposta.desc}
+					<ui:fragment rendered="#{resposta.status}">
+						<br />
+					</ui:fragment>
+					<b:image rendered="#{resposta.status}" styleClass="iconeValidacao"
+						value="#{resource['imagens/iconValidation.png']}" height="15"
+						width="25" tooltip="#{msg['resposta.justificativa']}" />
+					<h:outputText value="#{resposta.justificativa}"
+						rendered="#{resposta.status}"
+						styleClass="fontListaDesafiosValidados" escape="false" />
+				</b:dataTableColumn>
+
+				<b:dataTableColumn label="#{msg['resposta.comentarios']}">
+					<b:commandLink
+						value="#{resposta.comentarios.size()} #{msg['resposta.comentarios']}"
+						action="#{respostaBean.PrepararComentarios(resposta)}"
+						oncomplete="$('.modalComentario').modal('show');tableWidgetVar.DataTable().responsive.recalc();">
+						<f:ajax execute="@this" render=":amodalComentario :fComentario" />
+					</b:commandLink>
+					<b:commandButton value="#{msg['comentar']}" icon="comment"
+						actionListener="#{respostaBean.PrepararComentarios(resposta)}"
+						oncomplete="$('.modalComentario').modal('show');tableWidgetVar.DataTable().responsive.recalc();">
+						<f:ajax execute="@this" render=":amodalComentario :fComentario" />
+					</b:commandButton>
+				</b:dataTableColumn>
+
+				<b:dataTableColumn label="#{msg['acoes']}">
+
+					<b:commandButton
+						value="#{(resposta.status) ? msg['editar.validacao'] : msg['validar']}"
+						icon="ok"
+						actionListener="#{respostaBean.PrepararValidarResposta(resposta)}"
+						oncomplete="$('.modalAprovar').modal('show')"
+						rendered="#{editarDesafio.usuario.id == USUARIOLogado.id}"
+						title="#{(resposta.status) ? msg['resposta.editar.validacao'] : msg['resposta.validar']}"
+						style="white-space: pre;width:90px;">
+						<f:ajax execute="@this" render="@form" />
+					</b:commandButton>
+
+					<b:commandButton value="#{msg['cancelar.validacao']}" icon="remove"
+						actionListener="#{respostaBean.PrepararCancelarResposta(resposta)}"
+						oncomplete="$('.modalCancelar').modal('show')"
+						rendered="#{resposta.status and editarDesafio.usuario.id == USUARIOLogado.id}"
+						title="#{msg['resposta.cancelar.validacao']}"
+						style="white-space: pre;width:90px;">
+						<f:ajax execute="@this" render="@form" />
+					</b:commandButton>
+
+					<b:commandButton value="#{msg['editar']}" icon="pencil"
+						actionListener="#{respostaBean.PrepararEditarResposta(resposta)}"
+						oncomplete="document.getElementById('anchor_bt_responder').scrollIntoView()"
+						rendered="#{resposta.pesquisador.id == USUARIOLogado.id}"
+						title="#{msg['resposta.editar']}" style="width:90px;">
+						<f:ajax execute="@this" render="@form" />
+					</b:commandButton>
+
+					<b:commandButton value="#{msg['excluir']}" icon="trash"
+						actionListener="#{respostaBean.PrepararExcluirResposta(resposta)}"
+						oncomplete="$('.modalExcluir').modal('show')"
+						rendered="#{resposta.pesquisador.id == USUARIOLogado.id}"
+						title="#{msg['resposta.excluir']}" style="width:90px;">
+						<f:ajax execute="@this" render="@form" />
+					</b:commandButton>
+
+				</b:dataTableColumn>
+			</b:dataTable>
+
+			<b:row>
+				<b:column>
+					<b:well>
+						<h3>#{respostaDesafio.id == 0 ? msg['resposta.responder'] :
+							msg['resposta.editar']}</h3>
+     		 			#{respostaDesafio.id == 0 ? msg['resposta.responder.info'] : msg['resposta.editar.info']}
+    				</b:well>
+				</b:column>
+			</b:row>
+			<b:row>
+				<b:row>
+					<b:column>
+						<b:messages></b:messages>
+					</b:column>
+				</b:row>
+
+				<b:column colSm="6">
+					<b:row rendered="#{respostaDesafio.id != 0 ? true : false}">
+						<b:column>
+							<b:inputText label="Id" id="respostaid"
+								value="#{respostaDesafio.id}" disabled="true" />
+						</b:column>
+					</b:row>
+					<b:row>
+						<b:column>
+							<b:inputText label="#{msg['resposta.titulo']}"
+								id="respostatitulo" value="#{respostaDesafio.titulo}"
+								maxlength="49" />
+						</b:column>
+					</b:row>
+					<b:row>
+						<b:column>
+							<b:inputTextarea label="#{msg['resposta.descricao']}"
+								id="respostadesc" value="#{respostaDesafio.desc}" rows="6"
+								cols="45" binding="#{respostaBean.componenteDesc}" />
+						</b:column>
+					</b:row>
+					<a name="anchor_bt_responder" id="anchor_bt_responder" />
+					<b:row>
+						<b:column span="2" offset="0">
+							<b:commandButton id="bt_responder"
+								value="#{msg['resposta.responder.desafio']}"
+								action="#{respostaBean.CadastrarResposta(respostaDesafio)}"
+								rendered="#{respostaDesafio.id == 0 ? true : false}"
+								look="success" size="lg" update="@form">
+							</b:commandButton>
+							<b:commandButton id="bt_editar"
+								value="#{msg['resposta.editar.resposta']}"
+								action="#{respostaBean.EditarResposta(respostaDesafio)}"
+								rendered="#{respostaDesafio.id != 0 ? true : false}"
+								look="success" size="lg" update="@form">
+							</b:commandButton>
+						</b:column>
+						<b:column span="2" offset="2">
+							<b:commandButton id="bt_cancelar"
+								value="#{msg['resposta.editar.cancelar']}"
+								action="#{respostaBean.CancelarEditarResposta(respostaDesafio)}"
+								rendered="#{respostaDesafio.id != 0 ? true : false}"
+								look="danger" size="lg" immediate="true">
+								<f:ajax execute="@this" render="@form" />
+							</b:commandButton>
+						</b:column>
+					</b:row>
+				</b:column>
+				<b:column colSm="6">
+					<b:panel title="#{msg['usuario.informacao']}" collapsible="false">
+						<b:row>
+							<b:column style="text-align:center">
+								<svg fill="#0f90b8" viewBox="0 0 12 16" version="1.1" width="12"
+									height="16" aria-hidden="true"> <path fill-rule="evenodd"
+									d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path> </svg>
+								<span style="margin-left: 5px;">#{msg['resposta.ingles']}</span>
+							</b:column>
+						</b:row>
+						<br />
+						<b:row>
+							<b:column style="text-align:center">
+								<svg fill="#0f90b8" viewBox="0 0 12 16" version="1.1" width="12"
+									height="16" aria-hidden="true"> <path fill-rule="evenodd"
+									d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path> </svg>
+								<span style="margin-left: 5px;">#{msg['desafio.ferramenta.info']}
+									<a href="#anchor_bt_responder"
+									onClick="window.open('https://translate.google.com.br/#view=home&amp;op=translate&amp;sl=pt&amp;tl=en&amp;text=' + document.getElementById('input_fCadastrar:respostatitulo').value + '%0A' + document.getElementById('input_fCadastrar:respostadesc').value, '_blank');">#{msg['desafio.ferramenta.hyperlink']}</a>
+								</span>
+							</b:column>
+						</b:row>
+					</b:panel>
+				</b:column>
+
+			</b:row>
+
+			<b:modal id="amodalAprovar"
+				title="#{respostaBean.resposta.status ? msg['resposta.editar.validacao'] : msg['resposta.validar']}"
+				styleClass="modalAprovar" style="margin-top:200px;">
+				<b:row>
+					<b:column>
+						<b:row>
+							<b:column>
+								<h:outputText value="Id: " />
+								<h:outputText value="#{respostaBean.resposta.id}" />
+							</b:column>
+						</b:row>
+						<b:row>
+							<b:column>
+								<h:outputText value="#{msg['resposta.titulo']}:" />
+								<h:outputText value="#{respostaBean.resposta.titulo}" />
+							</b:column>
+						</b:row>
+						<b:inputTextarea label="#{msg['resposta.justificativa']}"
+							id="respostajustificativa"
+							value="#{respostaBean.resposta.justificativa}" rows="6" cols="45" />
+
+						<b:commandButton
+							value="#{respostaBean.resposta.status ? msg['editar'] : msg['validar']}"
+							action="#{respostaBean.ValidarResposta}"
+							onclick="$('.modalAprovar').modal('hide')" />
+
+						<b:button value="#{msg['cancelar']}"
+							onclick="$('.modalAprovar').modal('hide')" />
+					</b:column>
+				</b:row>
+			</b:modal>
+
+			<b:modal id="amodalCancelar"
+				title="#{msg['resposta.cancelar.validacao']}"
+				styleClass="modalCancelar" style="margin-top:200px;">
+				<h:panelGrid columns="2">
+
+					<h:outputText value="Id: " />
+					<h:outputText value="#{respostaBean.resposta.id}" />
+					<h:outputText value="#{msg['resposta.titulo']}:" />
+					<h:outputText value="#{respostaBean.resposta.titulo}" />
+
+					<b:commandButton value="#{msg['sim']}"
+						action="#{respostaBean.CancelarResposta}"
+						onclick="$('.modalCancelar').modal('hide')" />
+
+					<b:button value="#{msg['nao']}"
+						onclick="$('.modalCancelar').modal('hide')" />
+				</h:panelGrid>
+			</b:modal>
+
+			<b:modal id="amodalExcluir" title="#{msg['resposta.excluir']}"
+				styleClass="modalExcluir" style="margin-top:200px;">
+
+				<h:panelGrid columns="2">
+
+					<h:outputText value="Id: " />
+					<h:outputText value="#{respostaBean.resposta.id}" />
+					<h:outputText value="#{msg['resposta.titulo']}:" />
+					<h:outputText value="#{respostaBean.resposta.titulo}" />
+				</h:panelGrid>
+
+				<h:panelGrid rendered="#{respostaBean.resposta.status}" columns="1"
+					style="font-weight: bold; color: red">
+					<h:outputText value="#{msg['resposta.excluir.validada']}" />
+					<h:outputText value="#{msg['desafio.excluir.mesmo']}" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<b:commandButton value="#{msg['excluir']}"
+						action="#{respostaBean.ExcluirResposta}"
+						onclick="$('.modalExcluir').modal('hide')" immediate="true" />
+
+					<b:button value="#{msg['cancelar']}"
+						onclick="$('.modalExcluir').modal('hide')" />
+				</h:panelGrid>
+
+			</b:modal>
+
+		</h:form>
+
+		<b:modal id="amodalComentario" title="#{msg['resposta.comentarios']}"
+			styleClass="modalComentario">
+
+			<h:form id="fComentario">
+
+				<h:panelGrid columns="2">
+					<h:outputText value="Id: " />
+					<h:outputText value="#{respostaBean.resposta.id}" />
+					<h:outputText value="#{msg['resposta.titulo']}:" />
+					<h:outputText value="#{respostaBean.resposta.titulo}" />
+				</h:panelGrid>
+
+				<br />
+
+				<b:dataTable value="#{respostaBean.resposta.comentarios}"
+					var="comentario" widgetVar="tableWidgetVar" responsive="true"
+					scroll-horizontally="true">
+
+					<b:dataTableColumn>
+						<f:facet name="header">
+							<ul
+								style="margin-bottom: 0; list-style-type: none; padding-left: 0">
+								<li>#{msg['pesquisador']}: #{msg['comentario.texto']}</li>
+							</ul>
+						</f:facet>#{comentario.pesquisador.nome}: #{comentario.texto}
+					</b:dataTableColumn>
+
+					<b:dataTableColumn label="#{msg['acoes']}">
+
+						<b:commandButton value="#{msg['editar']}" icon="pencil"
+							action="#{respostaBean.PrepararEditarComentario(comentario)}"
+							title="#{msg['comentario.editar']}" style="width:85px;"
+							rendered="#{comentario.pesquisador.id == USUARIOLogado.id}"
+							update="@form">
+						</b:commandButton>
+
+						<b:commandButton value="#{msg['excluir']}" icon="trash"
+							action="#{respostaBean.ExcluirComentario(comentario)}"
+							title="#{msg['comentario.excluir']}" style="width:85px;"
+							rendered="#{comentario.pesquisador.id == USUARIOLogado.id}"
+							immediate="true" update="@form :fCadastrar">
+						</b:commandButton>
+					</b:dataTableColumn>
+
+				</b:dataTable>
+
+				<br />
+
+				<b:row>
+					<b:column>
+						<b:messages></b:messages>
+					</b:column>
+					<b:column colSm="6">
+						<b:row>
+							<b:column>
+								<b:inputTextarea label="#{comentarioResposta.id == 0 ? msg['comentario.novo'] : msg['comentario.editar']}"
+									id="comentario" value="#{comentarioResposta.texto}" rows="6"
+									cols="45" binding="#{respostaBean.componenteTexto}" />
+							</b:column>
+						</b:row>
+						<b:row>
+							<b:column span="2" offset="0">
+
+								<b:commandButton id="bt_comentar" value="#{msg['comentar']}"
+									action="#{respostaBean.CadastrarComentario(comentarioResposta)}"
+									rendered="#{comentarioResposta.id == 0 ? true : false}"
+									look="success" size="lg" update="@form :fCadastrar">
+								</b:commandButton>
+
+								<b:commandButton id="bt_editar_comentario"
+									value="#{msg['comentario.editar.comentario']}"
+									action="#{respostaBean.EditarComentario(comentarioResposta)}"
+									rendered="#{comentarioResposta.id != 0 ? true : false}"
+									look="success" size="lg" update="@form">
+								</b:commandButton>
+
+							</b:column>
+							<b:column span="2" offset="2">
+								<b:commandButton id="bt_cancelar"
+									value="#{msg['comentario.editar.cancelar']}"
+									action="#{respostaBean.CancelarEditarComentario(comentarioResposta)}"
+									rendered="#{comentarioResposta.id != 0 ? true : false}"
+									look="danger" size="lg" update="@form">
+								</b:commandButton>
+							</b:column>
+						</b:row>
+					</b:column>
+				</b:row>
+
+			</h:form>
+
+		</b:modal>
+
+	</ui:define>
+
+	<ui:define name="rodape">
+		<ui:include src="/includes/n_rodape.xhtml" />
+	</ui:define>
+
+</ui:composition>

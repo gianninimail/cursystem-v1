@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/n_template.xhtml"
+	xmlns:b="http://bootsfaces.net/ui">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/n_menu.xhtml" />
+	</ui:define>
+
+
+	<ui:define name="conteudo">
+		<h:form id="fCadastrar">
+			<b:row>
+				<b:column>
+					<b:well>
+						<h3>#{msg['usuario.junte.se.a.nos']}</h3>
+     		 			#{msg['usuario.venha.fazer.parte']}
+    				</b:well>
+				</b:column>
+			</b:row>
+			<b:row>
+				<b:column colSm="6">
+					<b:row>
+						<b:column>
+							<b:messages></b:messages>
+						</b:column>
+					</b:row>
+					<b:row>
+						<b:column>
+							<b:inputText label="#{msg['nome']}" id="nome"
+								value="#{usuarioBean.usuario.nome}" maxlength="49"
+								required="true" requiredMessage="#{msg['nome.obrigatorio']}" />
+						</b:column>
+					</b:row>
+					<b:row>
+						<b:column>
+							<b:inputText label="#{msg['email']}" id="email" required="true"
+								requiredMessage="#{msg['email.obrigatorio']}"
+								value="#{usuarioBean.usuario.email}" maxlength="44"
+								validatorMessage="#{msg['email.invalido']}"
+								binding="#{usuarioBean.componenteEmail}">
+								<f:validateRegex
+									pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+							</b:inputText>
+						</b:column>
+					</b:row>
+					<b:row>
+						<b:column>
+							<b:inputSecret label="#{msg['senha']}" id="senha" required="true"
+								requiredMessage="#{msg['senha.obrigatorio']}"
+								value="#{usuarioBean.usuario.senha}" maxlength="10"
+								binding="#{usuarioBean.componenteSenha}">
+							</b:inputSecret>
+						</b:column>
+					</b:row>
+					<b:row>
+						<b:column>
+							<b:inputSecret label="#{msg['senha.confirmar']}"
+								id="senhaconfirmar" required="true"
+								requiredMessage="#{msg['senha.confirmar.obrigatorio']}"
+								value="#{usuarioBean.usuario.senhaConfirmar}" maxlength="10"
+								binding="#{usuarioBean.componenteSenhaConfirmar}" />
+						</b:column>
+					</b:row>
+					<b:row>
+						<b:column>
+							<b:inputText label="#{msg['telefone']}" id="tel" required="true"
+								requiredMessage="#{msg['telefone.obrigatorio']}"
+								value="#{usuarioBean.usuario.tel}" mask="+99 (99) 99999-9999"
+								binding="#{usuarioBean.componenteTelefone}" />
+						</b:column>
+					</b:row>
+					<b:row>
+						<b:column>
+							<b:selectOneMenu label="#{msg['especialidade']}"
+								id="especialidade" required="true"
+								value="#{usuarioBean.pesquisador.idEspecialidade}">
+								<f:selectItems value="#{usuarioBean.listaEspecialidades}"
+									var="e" itemValue="#{e.id}" itemLabel="#{e.nome}" />
+							</b:selectOneMenu>
+						</b:column>
+					</b:row>
+					<b:row>
+						<b:column>
+							<b:inputText label="#{msg['instituicao']}" id="instituicao"
+								value="#{usuarioBean.pesquisador.instituto}" maxlength="50" />
+						</b:column>
+					</b:row>
+					<b:row>
+						<b:column>
+							<b:commandButton id="bt_criar"
+								value="#{msg['usuario.criar.uma.conta']}"
+								action="#{usuarioBean.cadastroUsuario}" look="success" size="lg" />
+						</b:column>
+					</b:row>
+				</b:column>
+				<b:column offset="1" colSm="4">
+					<b:panel title="#{msg['usuario.informacao']}" collapsible="false">
+						<b:row>
+							<b:column style="text-align:center">
+								<svg fill="#0f90b8" viewBox="0 0 12 16" version="1.1" width="12"
+									height="16" aria-hidden="true"> <path fill-rule="evenodd"
+									d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path> </svg>
+								<span style="margin-left: 5px;">#{msg['usuario.apos.cadastro']}</span>
+							</b:column>
+						</b:row>
+						<br />
+						<b:row>
+							<b:column style="text-align:center">
+								<svg fill="#0f90b8" viewBox="0 0 12 16" version="1.1" width="12"
+									height="16" aria-hidden="true"> <path fill-rule="evenodd"
+									d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path> </svg>
+								<span style="margin-left: 5px;">#{msg['usuario.contas.fiocruz']}</span>
+							</b:column>
+						</b:row>
+						<br />
+						<b:row>
+							<b:column style="text-align:center">
+								<svg fill="#0f90b8" viewBox="0 0 12 16" version="1.1" width="12"
+									height="16" aria-hidden="true"> <path fill-rule="evenodd"
+									d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path> </svg>
+								<span style="margin-left: 5px;">#{msg['usuario.colabore.com.a.gente']}</span>
+							</b:column>
+						</b:row>
+					</b:panel>
+				</b:column>
+			</b:row>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="rodape">
+		<ui:include src="/includes/n_rodape.xhtml" />
+	</ui:define>
+
+</ui:composition>

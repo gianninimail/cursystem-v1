@@ -9,15 +9,16 @@ public class Comentario extends ModeloBase {
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String texto;
-	private Resposta resposta;
+	private Long resposta;
 	private Pesquisador pesquisador;
 	private Date dtCadastro; 
 	
 	public Comentario() {
-		
+		super();
+		this.id = new Long(0);
 	}
 	
-	public Comentario(Long _id, String _texto, Resposta _resposta, Pesquisador _pesquisador, Date _dtCadastro) {
+	public Comentario(Long _id, String _texto, Long _resposta, Pesquisador _pesquisador, Date _dtCadastro) {
 		super();
 		this.id = _id;
 		this.texto = _texto;
@@ -42,11 +43,11 @@ public class Comentario extends ModeloBase {
 		this.texto = texto;
 	}
 	
-	public Resposta getResposta() {
+	public Long getResposta() {
 		return resposta;
 	}
 	
-	public void setResposta(Resposta resposta) {
+	public void setResposta(Long resposta) {
 		this.resposta = resposta;
 	}
 	

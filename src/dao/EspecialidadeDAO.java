@@ -16,6 +16,24 @@ public class EspecialidadeDAO implements InterfaceEspecialidadeDAO {
 	public EspecialidadeDAO(Connection conexao) {
 		this.conexao = conexao;
 	}
+	
+	@Override
+	public Boolean Inserir(Especialidade _especialidade) throws SQLException {
+
+		String comando = "insert into especialidade (nome,ativo_iu) "
+				+ "values (?,1)";
+
+		PreparedStatement ps = this.conexao.prepareStatement(comando);
+		ps.setString(1, _especialidade.getNome());
+
+		if(ps.execute()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+		
+	}
 
 	@Override
 	public List<Especialidade> listarTodosAtivos() throws SQLException {
@@ -54,7 +72,7 @@ public class EspecialidadeDAO implements InterfaceEspecialidadeDAO {
 		
 		try {
 			
-			String comando = "select * from especialidade order by id ";
+			String comando = "select * from especialidade where ativo_iu = 1 order by id ";
 			
 			PreparedStatement ps = this.conexao.prepareStatement(comando);
 			
@@ -73,6 +91,34 @@ public class EspecialidadeDAO implements InterfaceEspecialidadeDAO {
 		
 		
 		return listaEspecialidades;
+	}
+
+	@Override
+	public void Editar(Especialidade _especialidade) throws SQLException {
+
+		String comando = "update especialidade set nome = ? where id = ?";
+		
+		PreparedStatement ps = this.conexao.prepareStatement(comando);
+		
+		ps.setString(1, _especialidade.getNome());
+		
+		ps.setLong(2, _especialidade.getId());
+		
+		ps.execute();
+		
+	}	
+	
+	@Override
+	public void Excluir(Especialidade _especialidade) throws SQLException {
+
+		String comando = "delete from especialidade where id = ?";
+		
+		PreparedStatement ps = this.conexao.prepareStatement(comando);
+		
+		ps.setLong(1, _especialidade.getId());
+		
+		ps.execute();
+		
 	}
 
 	@Override

@@ -1,0 +1,542 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<body>
+
+	<b:row>
+		<b:column>
+			<b:well>
+				<h3>Ajuda do sistema CurSystem</h3>
+     		 			Utilize os tópicos da ajuda abaixo para obter instruções de utilização do sistema
+    		</b:well>
+		</b:column>
+	</b:row>
+
+	<b:row>
+		<b:column>
+			<b:well>
+				<h4>Tópicos</h4>
+				<b:row>
+					<b:column>
+					
+						<style type="text/css">
+							.topicos {
+							  counter-reset: item
+							}
+							.topicos li {
+							  display: block
+							}
+							.topicos li:before {
+							  content: counters(item, ".") " ";
+							  counter-increment: item
+							}
+						</style>
+					
+						<ol class="topicos">
+							<li><a href="#anchor_requisitar_acesso">Requisitar acesso</a></li>
+							<li><a href="#anchor_desafios">Desafios</a>
+								<ol class="topicos">
+								<li><a href="#anchor_listagem_desafios">Listagem de desafios cadastrados</a></li>
+								<li><a href="#anchor_cadastrar_desafios">Cadastrar desafios</a></li>
+								<li><a href="#anchor_editar_desafios">Editar desafios</a></li>
+								<li><a href="#anchor_remover_desafios">Remover desafios</a></li>
+								<li><a href="#anchor_paginacao_desafio">Paginação da tabela de desafios</a></li>
+								<li><a href="#anchor_informacoes_desafio">Visualizar informações extra do desafio</a></li>
+								</ol>
+							</li>
+							<li><a href="#anchor_resolucao_desafio">Resolução de Desafios</a>
+								<ol class="topicos">
+								<li><a href="#anchor_responder_desafio">Responder desafio</a></li>
+								<li><a href="#anchor_quadro_respostas">Quadro de respostas do desafio selecionado</a></li>
+								<li><a href="#anchor_excluir_resposta">Excluir resposta</a></li>
+								<li><a href="#anchor_validacao_resposta">Validação de resposta</a></li>
+								</ol>
+							</li>
+							<li><a href="#anchor_lista_discussao">Lista de discussão</a>
+								<ol class="topicos">
+								<li><a href="#anchor_cadastrar_comentario">Cadastrar comentário</a></li>
+								<li><a href="#anchor_editar_comentario">Editar comentário</a></li>
+								<li><a href="#anchor_excluir_comentario">Excluir comentário</a></li>
+								</ol>
+							</li>
+						</ol>
+					</b:column>
+				</b:row>
+			</b:well>
+		</b:column>
+	</b:row>
+
+	<b:row>
+		<b:column>
+			<b:well>
+				<h4>
+					<b><a id="anchor_requisitar_acesso" />1 Requisitar acesso</b>
+				</h4>
+				<b:row>
+					<b:column>Para criar uma conta do CurSystem:</b:column>
+				</b:row>
+				<b:row>
+					<b:column>Acesse a página inicial do CurSystem em <a
+							href="http://pseudomonas.procc.fiocruz.br:8185/CurSystem">http://pseudomonas.procc.fiocruz.br:8185/CurSystem</a>
+					</b:column>
+				</b:row>
+				<b:row>
+					<b:column>Clique no hiperlink Requisitar novo cadastro</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_inicial_requisitar.png"
+							height="80%" width="80%" style="border: 1px solid black" />
+					</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>Preencha os dados solicitados na tela</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_cadastro.png"
+							height="60%" width="60%" style="border: 1px solid black" />
+					</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>Ao final do cadastro clique no botão "Criar uma conta".</b:column>
+				</b:row>
+				<br />
+
+				<h4>
+					<b><a id="anchor_desafios" />2 Desafios</b>
+				</h4>
+				<b:row>
+					<b:column>O módulo de desafios propõe um modo de cadastrar no sistema desafios (problemas ou dúvidas) relacionados com a rede metabólica do organismo em questão. O módulo disponibiliza quatro operações principais: listagem, cadastro, remoção, edição e visualização integral das informações de um determinado desafio.</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>Os dados do objeto “desafio” são:</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>
+						<b>Id: </b>Gerado automaticamente pelo sistema, representa o identificador único no sistema e no banco de dados;</b:column>
+				</b:row>
+				<b:row>
+					<b:column>
+						<b>Título: </b>Título do desafio, esse campo aparecerá como informativo em outros módulos, para representar o desafio;</b:column>
+				</b:row>
+				<b:row>
+					<b:column>
+						<b>Especialidade: </b> Indica a especialidade, ou seja, grupo de especialista que terão acesso ao desafio;</b:column>
+				</b:row>
+				<b:row>
+					<b:column>
+						<b>Status: </b>Campo que indica se o desafio está em aberto, ou se já foi resolvido. Quando o desafio é criado, o sistema coloca automaticamente seu status em aberto.</b:column>
+				</b:row>
+				<b:row>
+					<b:column>
+						<b>Responsável: </b>Este campo representa o pesquisador que ficará responsável pelo desafio, que realizará tarefas de validação e manutenção do desafio;</b:column>
+				</b:row>
+				<b:row>
+					<b:column>
+						<b>Descrição: </b>Nesse campo o autor do desafio irá descrever o problema ou dúvida propostos no desafio;</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_desafio.png"
+							height="90%" width="90%" style="border: 1px solid black" />
+					</b:column>
+				</b:row>
+				<br />
+				<h4>
+					<a id="anchor_listagem_desafios" />2.1 Listagem de desafios
+					cadastrados
+				</h4>
+				<b:row>
+					<b:column>Na página inicial, após o login, ou atraves do "Menu > Desafios > Visualizar Desafios" o usuário tem a tabela de desafios previamente cadastrados (no módulo cadastro de desafios) de acordo com a especialidade desse usuário.</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_listagem_desafio.png"
+							height="60%" width="60%" style="border: 1px solid black" />
+					</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>A tabela permite a busca e filtragem de desafios. Para isso, basta digitar a busca pretendida no campo Procurar. A busca não diferencia letras maiúsculas e minúsculas, ou seja, não é case sensitive.</b:column>
+				</b:row>
+				<br />
+				<h4>
+					<a id="anchor_cadastrar_desafios" />2.2 Cadastrar desafios
+				</h4>
+				<b:row>
+					<b:column>Para cadastrar um novo desafio, no menu superior acesse "Desafios" depois “Novo desafio”.</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_novo_desafio.png"
+							height="50%" width="50%" style="border: 1px solid black" />
+					</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>A tela de "Criação de Desafio" será exibida:</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_novo_desafio_tela.png"
+							height="60%" width="60%" style="border: 1px solid black" />
+					</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>Após o cadastramento, será enviado e-mails para o responsável e a equipe cadastrada com a mesma especialidade do desafio.</b:column>
+				</b:row>
+				<br />
+				<h4>
+					<a id="anchor_editar_desafios" />2.3 Editar desafios
+				</h4>
+				<b:row>
+					<b:column>Para editar informações de um desafio já cadastrado, clique no botão "Editar"<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_editar.png" />. Cada desafio, da lista, tem os seus correspondentes botões de operações.</b:column>
+				</b:row>
+				<b:row>
+					<b:column>A mesma janela de preenchimento do cadastro irá abrir, mas com os dados do desafio selecionado já preenchidos.</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_editar_desafio_tela.png"
+							height="60%" width="60%" style="border: 1px solid black" />
+					</b:column>
+				</b:row>
+				<br />
+				<h4>
+					<a id="anchor_remover_desafios" />2.4 Remover desafios
+				</h4>
+				<b:row>
+					<b:column>Para remover um desafio cadastrado, apenas clique no botão "Excluir" <img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_excluir.png" /> corresponde a linha do mesmo.</b:column>
+				</b:row>
+				<b:row>
+					<b:column>Uma janela de confirmação irá aparecer. Basta confirmar!</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_excluir_desafio.png"
+							style="border: 1px solid black" height="40%" width="40%" />
+					</b:column>
+				</b:row>
+				<br />
+
+				<h4>
+					<a id="anchor_paginacao_desafio" />2.5 Paginação da tabela de desafios
+				</h4>
+				<b:row>
+					<b:column>Por padrão, se a tabela de desafios tiver mais que dez (10) registros, o sistema automaticamente irá criar páginas. Essas páginas são múltiplas de dez (10). Para navegar entre as páginas, o usuário poderá utilizar os botões de navegação:</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_paginacao.png"
+							style="border: 1px solid black" height="60%" width="60%" />
+					</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>A quantidade de registros por página pode ser alterada de dez (10) para outra quantidade na opção na parte superior esqueda da tabela, "Mostrar <i>n</i> registros" conforme destaque na imagem abaixo:</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_quantidade_paginacao.png"
+							style="border: 1px solid black" height="20%" width="20%" />
+					</b:column>
+				</b:row>
+				<br />
+				<h4>
+					<a id="anchor_informacoes_desafio" />2.6 Visualizar informações extra
+					do desafio
+				</h4>
+				<b:row>
+					<b:column>Na tela onde contém a lista de desafios, não são exibidos todos os dados existentes. Para visualizar todas informações, basta clicar no hiperlink do nome do desafio.</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_desafio_hiperlink.png"
+							height="60%" width="60%" style="border: 1px solid black" />
+					</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>Irá direcionar para uma página informativa contendo todos as informações do desafio, incluindo as respostas e as opções de resolução de desafio mais detalhadas na seção adiante.</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_desafio_detalhe.png"
+							height="60%" width="60%" style="border: 1px solid black" />
+					</b:column>
+				</b:row>
+				<br />
+				<h4>
+					<b><a id="anchor_resolucao_desafio" />3 Resolução de Desafios</b>
+				</h4>
+				<b:row>
+					<b:column>Esse módulo foi desenvolvido para auxiliar os pesquisadores a criarem suas hipóteses de respostas para a resolução dos desafios.</b:column>
+				</b:row>
+				<br />
+				<h4>
+					<a id="anchor_responder_desafio" />3.1 Responder desafio
+				</h4>
+				<b:row>
+					<b:column>Essa tarefa consiste em criar respostas (que serão analisadas e validadas pelo responsável) e futuras soluções para cada desafio cadastrado.</b:column>
+				</b:row>
+				<b:row>
+					<b:column>No final da página detalhada do desafio, o usuário descreve o título de sua resposta, campo que irá representar a resposta. E a descrição, ou seja, sua justificativa em relação à modificação na rede metabólica, após preencher os campos basta clicar no botão “Responder desafio”.</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_responder_desafio.png"
+							height="60%" width="60%" style="border: 1px solid black" />
+					</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>Uma mensagem de cadastro efetuado com sucesso será exibida, e a resposta será incluída na listagem do quadro de resposta do desafio selecionado.</b:column>
+				</b:row>
+				<br />
+				<h4>
+					<a id="anchor_quadro_respostas" />3.2 Quadro de respostas do desafio
+					selecionado
+				</h4>
+				<b:row>
+					<b:column>Na página detalhada do desafio, abaixo da descrição do desafio é exibida a tabela com todas as respostas cadastradas do desafio selecionado na lista de desafios. A tabela de resposta utilizada tem a mesma estrutura da tabela de desafio, ou seja, irá criar páginas caso haja mais de dez (10) respostas cadastradas. A navegação também se dá através dos botões "Anterior" e "Seguinte".</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_respostas_desafio.png"
+							height="60%" width="60%" style="border: 1px solid black" />
+					</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>No quadro de respostas, as seguintes informações da resposta são exibidas:</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>
+						<b>Id: </b>Identificador único da resposta no sistema;</b:column>
+				</b:row>
+				<b:row>
+					<b:column>
+						<b>Pesquisador: </b> Responsável pela crição e manutenção da resposta;</b:column>
+				</b:row>
+				<b:row>
+					<b:column>
+						<b>Título: </b>Titulo cadastrado pelo usuário;</b:column>
+				</b:row>
+
+				<b:row>
+					<b:column>
+						<b>Descrição: </b>justificativa em relação à modificação na rede metabólica;</b:column>
+				</b:row>
+				<b:row>
+					<b:column>
+						<b>Justificação da Validação: </b>Caso a resposta tenha sido validada pelo dono do desafio a justificativa da validação é exibida em <font
+							color="green">verde</font>;</b:column>
+				</b:row>
+				<b:row>
+					<b:column>
+						<b>Comentário: </b>Informa a quantidade de comentários sobre essa resposta;</b:column>
+				</b:row>
+				<br />
+				<h4>
+					<a id="anchor_excluir_resposta" />3.3 Excluir Resposta
+				</h4>
+				<b:row>
+					<b:column>No próprio quadro de respostas, o usuário criador da resposta pode executar uma exclusão. Cada resposta cadastrada da listagem, tem seu botão "Excluir" <img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_excluir.png" />, para excluir basta clicar no botão correspondente à resposta.</b:column>
+				</b:row>
+				<b:row>
+					<b:column>Uma janela de confirmação, com o “Id” e “Título”, será exibida. Basta confirmar!</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_excluir_resposta.png"
+							style="border: 1px solid black" height="40%" width="40%" />
+					</b:column>
+				</b:row>
+				<br />
+				<h4>
+					<a id="anchor_validacao_resposta" />3.4 Validação de resposta
+				</h4>
+				<b:row>
+					<b:column>Depois de analisar todas respostas e seus comentários, o usuário (pesquisador) responsável pelo desafio, pode escolher a melhor resposta e validar, ou seja, como uma solução atingível para o desafio.</b:column>
+				</b:row>
+				<b:row>
+					<b:column>Para validar uma resposta, basta que o usuário responsável pelo desafio clique no botão "Validar" <img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_validar.png" /> da melhor resposta.</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_validar_resposta.png"
+							height="80%" width="80%" style="border: 1px solid black" />
+					</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>Depois aparecerá um campo para preencher o motivo da validação e confirmação final, após o processamento do sistema, a resposta escolhida aparecerá com o ícone verde ao lado<b:image
+							styleClass="iconeValidacao"
+							value="#{resource['imagens/iconValidation.png']}" height="15"
+							width="25" tooltip="#{msg['resposta.justificativa']}" />. Apenas uma resposta pode ser validada, sendo assim, quando já existe uma validação, esta, será desmarcada para dar lugar a nova marcação.</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_resposta_validada.png"
+							style="border: 1px solid black" height="80%" width="80%" />
+					</b:column>
+				</b:row>
+				<br />
+				<h4>
+					<b><a id="anchor_lista_discussao" />4 Lista de discussão</b>
+				</h4>
+				<b:row>
+					<b:column>A lista de discursão foi implementada com ideia de possibilitar o grupo da especialidade do desafio, fazer comentários atrelados as respostas do desafio. Cada pesquisador cadastrado no grupo poderá cadastrar, editar e excluir comentários.</b:column>
+				</b:row>
+				<b:row>
+					<b:column>Para visualizar os comentários de cada resposta, basta clicar no hiperlink de "Comentários" da linha da Resposta. Ao lado esquedo do hiperlink de comentário é informado a quantidade de comentários para resposta</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_resposta_comentario.png"
+							height="60%" width="60%" style="border: 1px solid black" />
+					</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>O comentário estará vinculado ao pesquisador que o fez, sendo responsabilidade do mesmo, a edição ou exclusão. No próprio comentário, pode-se executar as tarefas de edição e exclusão, descritas nos próximos tópicos.</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_listagem_comentario.png"
+							height="50%" width="50%" style="border: 1px solid black" />
+					</b:column>
+				</b:row>
+				<br />
+				<h4>
+					<a id="anchor_cadastrar_comentario" />4.1 Cadastrar comentário
+				</h4>
+				<b:row>
+					<b:column>Para cadastrar um comentário, na tela de respostas do desafio o usuário deve clicar no botão "Comentar" da resposta.</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_novo_comentario.png"
+							height="60%" width="60%" style="border: 1px solid black" />
+					</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>Uma janela de comentários aparecerá, na parte inferior da janela haverá o campo para escrever o comentário:</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_comentar.png"
+							height="50%" width="50%" style="border: 1px solid black" />
+					</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>Basta digitar o comentário e clicar no botão "Comentar". Após a gravação do banco de dados o sistema mostrará uma mensagem indicando sucesso na operação.</b:column>
+				</b:row>
+				<br />
+				<h4>
+					<a id="anchor_editar_comentario" />4.2 Editar comentário
+				</h4>
+				<b:row>
+					<b:column>Para editar um comentário, o usuário deverá encontra-lo na lista de comentário do painel, e clicar no botão "Editar"<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_editar.png" />.</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>O texto do comentário para ser editado aparecerá na caixa de texto:</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_editar_comentario.png"
+							height="50%" width="50%" style="border: 1px solid black" />
+					</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column>Após edição do comentário, basta salvar clicando no botão "Editar".</b:column>
+				</b:row>
+				<br />
+				<h4>
+					<a id="anchor_excluir_comentario" />4.3 Excluir comentário
+				</h4>
+				<b:row>
+					<b:column>Para excluir um comentário, basta clicar no botão "Excluir" <img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_excluir.png" /> do comentário desejado, o sistema irá apagar o registro do banco de dados.</b:column>
+				</b:row>
+				<br />
+				<b:row>
+					<b:column style="text-align: center;">
+						<img
+							src="#{request.contextPath}/resources/imagens/ajuda/pt_excluir_comentario.png"
+							style="border: 1px solid black" height="50%" width="50%" />
+					</b:column>
+				</b:row>
+				<br />
+			</b:well>
+		</b:column>
+	</b:row>
+
+</body>
+</html>

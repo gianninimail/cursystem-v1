@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/n_template.xhtml"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:b="http://bootsfaces.net/ui">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/n_menu.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:form id="f">
+
+			<b:row>
+				<b:column>
+					<b:well>
+						<h3>#{msg['desafio.lista']}</h3>
+     		 			#{msg['desafio.lista.info.manutencao']}
+    				</b:well>
+				</b:column>
+			</b:row>
+
+
+			<style type="text/css">
+				.fontListaDesafiosREOPENED {
+					font-weight: bold !important;
+					color: #ff0000 !important;
+				}
+				
+				.fontListaDesafiosOPEN {
+					font-weight: bold !important;
+				}
+			</style>
+
+			<b:dataTable value="#{desafioBean.desafios}" var="desafio" excel="true" csv="true" pdf="true"
+				row-group="orderFixed:[2,'desc'],rowGroup:{dataSrc:2,startRender: function ( rows, group ) {return 'Status: ' + group},endRender: null}"
+				row-style-class="#{desafio.status.id == 3 ?' fontListaDesafiosREOPENED' : desafio.status.id == 2 ? 'fontListaDesafiosOPEN' : null}">
+				<b:dataTableColumn label="Id">
+					<b:commandLink value="#{desafio.id}"
+						action="#{desafioBean.PrepararRespostas(desafio)}" />
+				</b:dataTableColumn>
+				<b:dataTableColumn label="#{msg['desafio.titulo']}">
+					<b:commandLink value="#{desafio.titulo}"
+						action="#{desafioBean.PrepararRespostas(desafio)}" />
+				</b:dataTableColumn>
+				<b:dataTableColumn label="#{msg['desafio.status']}"
+					value="#{desafio.status.nome}" />
+				<b:dataTableColumn label="#{msg['desafio.especialidade']}"
+					value="#{desafio.especialidade.nome}" />
+				<b:dataTableColumn label="#{msg['desafio.dono']}"
+					value="#{desafio.usuario.nome}" />
+				<b:dataTableColumn label="#{msg['desafio.repostas']}">
+					<b:commandLink value="#{desafio.respostas.size()}"
+						action="#{desafioBean.PrepararRespostas(desafio)}" />
+				</b:dataTableColumn>
+				<b:dataTableColumn label="#{msg['acoes']}">
+
+					<b:commandButton icon="pencil" value="#{msg['editar']}"
+						action="#{desafioBean.PrepararEditarDesafio(desafio)}"
+						title="#{msg['desafio.editar']}" style="width:85px;">
+					</b:commandButton>
+
+					<b:commandButton icon="trash" value="#{msg['excluir']}"
+						actionListener="#{desafioBean.PrepararExcluirDesafio(desafio)}"
+						oncomplete="$('.modalPseudoClass').modal('show')"
+						title="#{msg['desafio.excluir']}" style="width:85px;">
+						<f:ajax execute="@this" render="@form" />
+					</b:commandButton>
+				</b:dataTableColumn>
+
+			</b:dataTable>
+
+			<b:modal id="amodal" title="#{msg['desafio.excluir']}"
+				styleClass="modalPseudoClass" style="margin-top:200px;">
+
+				<h:panelGrid columns="2">
+
+					<h:outputText value="Id: " />
+					<h:outputText value="#{desafioBean.desafio.id}" />
+					<h:outputText value="#{msg['desafio.titulo']}:" />
+					<h:outputText value="#{desafioBean.desafio.titulo}" />
+				</h:panelGrid>
+				<h:panelGrid
+					rendered="#{desafioBean.desafio.respostas.size() > 0 ? true : false}"
+					columns="1" style="font-weight: bold; color: red">
+					<h:outputText
+						value="#{msg['desafio.existem']} #{desafioBean.desafio.respostas.size()} #{msg['desafio.respostas.atreladas']}" />
+					<h:outputText value="#{msg['desafio.excluir.mesmo']}" />
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<b:commandButton value="#{msg['excluir']}"
+						action="#{desafioBean.ExcluirDesafio}"
+						onclick="$('.modalPseudoClass').modal('hide')" />
+
+					<b:button value="#{msg['cancelar']}"
+						onclick="$('.modalPseudoClass').modal('hide')" />
+				</h:panelGrid>
+
+
+			</b:modal>
+
+		</h:form>
+
+	</ui:define>
+
+	<ui:define name="rodape">
+		<ui:include src="/includes/n_rodape.xhtml" />
+	</ui:define>
+
+</ui:composition>

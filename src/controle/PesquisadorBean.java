@@ -2,28 +2,35 @@ package controle;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.component.UIComponent;
 import javax.faces.model.ListDataModel;
 
 import org.primefaces.event.TabChangeEvent;
 //import org.primefaces.event.TabCloseEvent;
 
+import javax.faces.context.FacesContext;
+
 import dao.PesquisadorDAO;
 import dao.TipoUsuarioDAO;
+import dao.UsuarioDAO;
 import modelo.Pesquisador;
 import modelo.TipoUsuario;
 import modelo.Usuario;
+import util.BeanBase;
 import util.FabricaConexao;
 import util.JSFUtil;
 import util.SessaoUtil;
 
 @ManagedBean
-public class PesquisadorBean implements Serializable {
+public class PesquisadorBean extends BeanBase implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -35,8 +42,46 @@ public class PesquisadorBean implements Serializable {
 	private List<Usuario> listaUsuariosParaPesquisadores;
 	private Boolean ehNovoPesquisador = true;
 	private ListDataModel<Pesquisador> pesquisadores;
+	private ListDataModel<Pesquisador> pesquisadoresPendentes;
 	private List<TipoUsuario> listaTiposUsuarios;
+	
+	private UIComponent componenteEmail;
+	private UIComponent componenteTelefone;
+	private UIComponent componenteSenha;
+	private UIComponent componenteSenhaConfirmar;
 
+	public UIComponent getComponenteEmail() {
+		return componenteEmail;
+	}
+
+	public void setComponenteEmail(UIComponent componenteEmail) {
+		this.componenteEmail = componenteEmail;
+	}
+
+	public UIComponent getComponenteTelefone() {
+		return componenteTelefone;
+	}
+
+	public void setComponenteTelefone(UIComponent componenteTelefone) {
+		this.componenteTelefone = componenteTelefone;
+	}
+
+	public UIComponent getComponenteSenha() {
+		return componenteSenha;
+	}
+
+	public void setComponenteSenha(UIComponent componenteSenha) {
+		this.componenteSenha = componenteSenha;
+	}
+
+	public UIComponent getComponenteSenhaConfirmar() {
+		return componenteSenhaConfirmar;
+	}
+
+	public void setComponenteSenhaConfirmar(UIComponent componenteSenhaConfirmar) {
+		this.componenteSenhaConfirmar = componenteSenhaConfirmar;
+	}	
+	
 	public PesquisadorBean() {
 		this.pesquisador = new Pesquisador();
 		this.listaPesquisadores = new ArrayList<Pesquisador>();
@@ -80,6 +125,14 @@ public class PesquisadorBean implements Serializable {
 
 	public void setPesquisadores(ListDataModel<Pesquisador> pesquisadores) {
 		this.pesquisadores = pesquisadores;
+	}
+	
+	public ListDataModel<Pesquisador> getPesquisadoresPendentes() {
+		return pesquisadoresPendentes;
+	}
+
+	public void setPesquisadoresPendentes(ListDataModel<Pesquisador> pesquisadoresPendentes) {
+		this.pesquisadoresPendentes = pesquisadoresPendentes;
 	}
 
 	public List<Pesquisador> getListaPesquisadores() {
@@ -181,18 +234,44 @@ public class PesquisadorBean implements Serializable {
 
 			fabrica.fecharConexao();
 
-			JSFUtil.adicionarMensagemSucesso("Successfully deleted searcher!");
+			JSFUtil.adicionarMensagemSucesso(getMensagem("usuario.excluido"));
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			JSFUtil.adicionarMensagemErro(e.getMessage());
+			JSFUtil.adicionarMensagemErro(getMensagem("usuario.excluir.erro"));
 		}
 	}
 
 	public void PrepararExcluir() {
 		this.pesquisador = pesquisadores.getRowData();
 	}
+	
+	public void AprovarPesquisador() {
+		try {
 
+			FabricaConexao fabrica = new FabricaConexao();
+			Connection conexao = fabrica.fazerConexao();
+
+			PesquisadorDAO dao = new PesquisadorDAO(conexao);
+			dao.Aprovar(this.pesquisador);
+
+			AtualizarListaPesquisadoresPendentes();
+
+			fabrica.fecharConexao();
+
+			JSFUtil.adicionarMensagemSucesso(getMensagem("usuario.aprovado"));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			JSFUtil.adicionarMensagemErro(e.getMessage());
+		}
+	}
+	
+	public void PrepararPendente() {
+		this.pesquisador = pesquisadoresPendentes.getRowData();
+	}
+	
+	@Deprecated
 	public void EditarPesquisador() {
 		try {
 
@@ -214,8 +293,75 @@ public class PesquisadorBean implements Serializable {
 		}
 	}
 
+	public String EditarPesquisador(Pesquisador pesquisador) {
+		try {
+			String outcome = "";
+			String msgSucesso = "";
+			
+			this.pesquisador = pesquisador;
+			
+			if (existeUsuarioEmail()) {
+				JSFUtil.adicionarMensagemErroComponente(componenteEmail.getClientId(),
+						this.getMensagem("usuario.email.ja.cadastrado"));
+				return outcome;
+			}
+
+			if (!telefoneValido()) {
+				JSFUtil.adicionarMensagemErroComponente(componenteTelefone.getClientId(),
+						this.getMensagem("usuario.telefone.invalido"));
+				return outcome;
+			}
+
+			if (!senhaValido()) {
+				JSFUtil.adicionarMensagemErroComponente(componenteSenha.getClientId(),
+						this.getMensagem("usuario.senha.invalida"));
+				return outcome;
+			}
+
+			if (!senhasIguais()) {
+				JSFUtil.adicionarMensagemErroComponente(componenteSenhaConfirmar.getClientId(),
+						this.getMensagem("senha.confirmar.iguais"));
+				return outcome;
+			}
+
+			FabricaConexao fabrica = new FabricaConexao();
+			Connection conexao = fabrica.fazerConexao();
+
+			PesquisadorDAO dao = new PesquisadorDAO(conexao);
+			dao.Editar(pesquisador);
+
+			fabrica.fecharConexao();
+
+			msgSucesso = getMensagem("usuario.editado");
+			JSFUtil.adicionarMensagemSucesso(msgSucesso);
+			
+			return outcome;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			JSFUtil.adicionarMensagemErro(e.getMessage());
+			return "";
+		}
+	}	
+	
 	public void PrepararEditar() {
 		this.pesquisador = pesquisadores.getRowData();
+	}
+	
+	public String PrepararEditarPesquisador(Pesquisador pesquisador) throws Exception {
+
+		try {
+			
+			Map<String,Object> sessionMapObj = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+			
+			sessionMapObj.put("editarPesquisador", pesquisador);
+
+			return "/alteracao/alt_usuario.jsf?faces-redirect=true";
+
+		} catch (Exception e) {
+			return null;
+		}
+
 	}
 
 	private void AtualizarListaUsuarioParaPesquisadores() {
@@ -228,6 +374,25 @@ public class PesquisadorBean implements Serializable {
 			PesquisadorDAO dao = new PesquisadorDAO(conexao);
 
 			this.listaUsuariosParaPesquisadores = dao.listarUsuariosParaPesquisador();
+
+			fabrica.fecharConexao();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			JSFUtil.adicionarMensagemErro(e.getMessage());
+		}
+	}
+	
+	private void AtualizarListaPesquisadoresPendentes() {
+
+		try {
+
+			FabricaConexao fabrica = new FabricaConexao();
+			Connection conexao = fabrica.fazerConexao();
+
+			PesquisadorDAO dao = new PesquisadorDAO(conexao);
+			
+			pesquisadoresPendentes = new ListDataModel<Pesquisador>(dao.listarPesquisadoresPendentes());
 
 			fabrica.fecharConexao();
 
@@ -289,6 +454,8 @@ public class PesquisadorBean implements Serializable {
 			pesquisadores = new ListDataModel<Pesquisador>(listaPesquisadores);
 			
 			AtualizarListaUsuarioParaPesquisadores();
+			
+			AtualizarListaPesquisadoresPendentes();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -309,4 +476,44 @@ public class PesquisadorBean implements Serializable {
 	}
 
 	// FIM DOS METODOS PARA MANIPULACAO DA PAGINA - FRONT END
+
+	private boolean existeUsuarioEmail() throws SQLException {
+		FabricaConexao fabrica = new FabricaConexao();
+		Connection conexao = fabrica.fazerConexao();
+		UsuarioDAO dao = new UsuarioDAO(conexao);
+		Usuario user = dao.PegarPeloEmail(this.pesquisador.getEmail());
+		
+		if (user != null) {
+			if (user.getId().equals(this.pesquisador.getId())) {
+				return false;
+			}else {
+				return true;
+			}
+		}else {	
+			return false;
+		}
+	}	
+
+	private boolean telefoneValido() {
+		String telefone = this.pesquisador.getTel();
+		if (telefone.endsWith("_")) {
+			telefone = telefone.substring(0, telefone.length() - 1);
+		}
+		if (telefone.endsWith("_")) {
+			return false;
+		}
+		this.pesquisador.setTel(telefone);
+		return true;
+	}	
+	
+	private boolean senhaValido() {
+		return pesquisador.getSenha().length() >= 5;
+	}
+
+	private boolean senhasIguais() {
+		return pesquisador.getSenha().equals(pesquisador.getSenhaConfirmar());
+	}
+
+
+	
 }

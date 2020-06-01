@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/n_template.xhtml"
+	xmlns:b="http://bootsfaces.net/ui">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/n_menu.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:form id="f">
+
+			<b:row>
+				<b:column>
+					<b:well>
+						<h3>#{msg['usuario.lista.pendente']}</h3>
+     		 			#{msg['usuario.lista.info.pendente']}
+    				</b:well>
+				</b:column>
+			</b:row>
+			<b:row>
+				<b:row>
+					<b:column>
+						<b:messages></b:messages>
+					</b:column>
+				</b:row>
+
+				<b:dataTable value="#{pesquisadorBean.pesquisadoresPendentes}"
+					var="pesquisador">
+					<b:dataTableColumn value="#{pesquisador.id}" />
+					<b:dataTableColumn label="#{msg['nome']}"
+						value="#{pesquisador.nome}" />
+					<b:dataTableColumn label="Login" value="#{pesquisador.login}" />
+					<b:dataTableColumn label="#{msg['especialidade']}"
+						value="#{pesquisador.especialidade.nome}" />
+					<b:dataTableColumn label="#{msg['email']}"
+						value="#{pesquisador.email}" />
+					<b:dataTableColumn label="#{msg['telefone']}"
+						value="#{pesquisador.tel}" />
+					<b:dataTableColumn label="#{msg['instituicao']}"
+						value="#{pesquisador.instituto}" />
+					<b:dataTableColumn label="#{msg['usuario.tipo']}"
+						value="#{pesquisador.tipoUsuario.nome}" />
+
+
+
+					<b:dataTableColumn label="#{msg['acoes']}">
+						<b:commandButton value="#{msg['aprovar']}" icon="ok"
+							actionListener="#{pesquisadorBean.PrepararPendente}"
+							disabled="#{USUARIOLogado.tipoUsuario.id == 1 ? false : true}"
+							oncomplete="$('.modalAprovar').modal('show')"
+							title="#{msg['usuario.aprovar']}" style="width:85px;">
+							<f:ajax execute="@this" render="@form" />
+						</b:commandButton>
+					
+						<b:commandButton value="#{msg['excluir']}" icon="trash"
+							actionListener="#{pesquisadorBean.PrepararPendente}"
+							disabled="#{USUARIOLogado.tipoUsuario.id == 1 ? false : true}"
+							oncomplete="$('.modalExcluir').modal('show')"
+							title="#{msg['usuario.excluir']}" style="width:85px;">
+							<f:ajax execute="@this" render="@form" />
+						</b:commandButton>
+					</b:dataTableColumn>
+
+				</b:dataTable>
+			</b:row>
+
+			<b:modal id="amodalAprovar" title="#{msg['usuario.aprovar']}"
+				styleClass="modalAprovar" style="margin-top:200px;">
+
+				<h:panelGrid columns="2">
+
+					<h:outputText value="Id: " />
+					<h:outputText value="#{pesquisadorBean.pesquisador.id}" />
+					<h:outputText value="#{msg['nome']}:" />
+					<h:outputText value="#{pesquisadorBean.pesquisador.nome}" />
+
+					<b:commandButton value="#{msg['aprovar']}"
+						action="#{pesquisadorBean.AprovarPesquisador}"
+						onclick="$('.modalAprovar').modal('hide')" />
+
+					<b:button value="#{msg['cancelar']}"
+						onclick="$('.modalAprovar').modal('hide')" />
+
+
+				</h:panelGrid>
+
+			</b:modal>
+
+			<b:modal id="amodalExcluir" title="#{msg['usuario.excluir']}"
+				styleClass="modalExcluir" style="margin-top:200px;">
+
+				<h:panelGrid columns="2">
+
+					<h:outputText value="Id: " />
+					<h:outputText value="#{pesquisadorBean.pesquisador.id}" />
+					<h:outputText value="#{msg['nome']}:" />
+					<h:outputText value="#{pesquisadorBean.pesquisador.nome}" />
+
+					<b:commandButton value="#{msg['excluir']}"
+						action="#{pesquisadorBean.ExcluirPesquisador}"
+						onclick="$('.modalExcluir').modal('hide')" />
+
+					<b:button value="#{msg['cancelar']}"
+						onclick="$('.modalExcluir').modal('hide')" />
+
+
+				</h:panelGrid>
+
+			</b:modal>
+
+		</h:form>
+
+	</ui:define>
+
+	<ui:define name="rodape">
+		<ui:include src="/includes/n_rodape.xhtml" />
+	</ui:define>
+
+</ui:composition>

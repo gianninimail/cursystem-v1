@@ -6,24 +6,67 @@
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
-	template="/templates/template.xhtml"
-	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+	template="/templates/n_template.xhtml"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:b="http://bootsfaces.net/ui">
 
-	<ui:define name="cabecalho">
-		<ui:include src="/includes/cabecalho.xhtml" />
-	</ui:define>
-	
 	<ui:define name="menu">
-	    <ui:include src="/includes/menu.xhtml" />
+		<ui:include src="/includes/n_menu.xhtml" />
 	</ui:define>
-	
+
 	<ui:define name="conteudo">
-		<h1 id="tituloPrincipal"></h1>
-		<p:graphicImage id="imgPrincipal" url="/resources/imagens/logo-cursystem.png" />
+		<h:form id="f">
+
+			<b:row>
+				<b:column>
+					<b:well>
+						<h3>#{msg['desafio.lista']}</h3>
+     		 			#{msg['desafio.lista.info']}
+    				</b:well>
+				</b:column>
+			</b:row>
+			
+			<style type="text/css">
+				.fontListaDesafiosREOPENED {
+					font-weight: bold !important;
+					color: #ff0000 !important;
+				}
+				
+				.fontListaDesafiosOPEN {
+					font-weight: bold !important;
+				}
+			</style>
+
+			<b:dataTable value="#{desafioBean.desafiosFiltrados}" var="desafio" excel="true" csv="true" pdf="true"
+				row-group="orderFixed:[2,'desc'],rowGroup:{dataSrc:2,startRender: function ( rows, group ) {return 'Status: ' + group},endRender: null}"
+				row-style-class="#{desafio.status.id == 3 ?' fontListaDesafiosREOPENED' : desafio.status.id == 2 ? 'fontListaDesafiosOPEN' : null}">
+				<b:dataTableColumn label="Id">
+					<b:commandLink value="#{desafio.id}"
+						action="#{desafioBean.PrepararRespostas(desafio)}" />
+				</b:dataTableColumn>
+				<b:dataTableColumn label="#{msg['desafio.titulo']}">
+					<b:commandLink value="#{desafio.titulo}"
+						action="#{desafioBean.PrepararRespostas(desafio)}" />
+				</b:dataTableColumn>
+				<b:dataTableColumn label="#{msg['desafio.status']}"
+					value="#{desafio.status.nome}" />
+				<b:dataTableColumn label="#{msg['desafio.especialidade']}"
+					value="#{desafio.especialidade.nome}" />
+				<b:dataTableColumn label="#{msg['desafio.dono']}"
+					value="#{desafio.usuario.nome}" />
+				<b:dataTableColumn label="#{msg['desafio.repostas']}">
+					<b:commandLink value="#{desafio.respostas.size()}"
+						action="#{desafioBean.PrepararRespostas(desafio)}" />
+				</b:dataTableColumn>
+
+			</b:dataTable>
+
+		</h:form>
+
 	</ui:define>
-	
+
 	<ui:define name="rodape">
-	   <ui:include src="/includes/rodape.xhtml" />
+		<ui:include src="/includes/n_rodape.xhtml" />
 	</ui:define>
 
 </ui:composition>

@@ -12,16 +12,20 @@ public class Usuario implements Serializable, EntidadeBase {
 	String nome;
 	String login;
 	String senha;
+	String senhaConfirmar;
 	String tel;
 	String email;
 	Date dataCadastro;
 	TipoUsuario tipoUsuario;
+	Integer status;
+	Date dataStatus;
 	
 	public Usuario() {
 		this.id = new Long(0);
 	}
 	
-	public Usuario (Long id, String nome, String login, String senha, String tel, String email, Date dtCadastro, TipoUsuario tipoUsuario) {
+	public Usuario (Long id, String nome, String login, String senha, String tel, String email, Date dtCadastro, TipoUsuario tipoUsuario
+			, Integer status, Date dtStatus) {
 		this.id = id;
 		this.nome = nome;
 		this.login = login;
@@ -31,6 +35,8 @@ public class Usuario implements Serializable, EntidadeBase {
 		this.dataCadastro = dtCadastro;
 		this.tipoUsuario = tipoUsuario;
 		this.dataCadastro = dtCadastro;
+		this.status = status;
+		this.dataStatus = dtStatus;
 	}
 	public Long getId() {
 		return id;
@@ -80,6 +86,14 @@ public class Usuario implements Serializable, EntidadeBase {
 		this.senha = senha;
 	}
 
+	public String getSenhaConfirmar() {
+		return senhaConfirmar;
+	}
+
+	public void setSenhaConfirmar(String senhaConfirmar) {
+		this.senhaConfirmar = senhaConfirmar;
+	}	
+	
 	public String getEmail() {
 		return email;
 	}
@@ -95,6 +109,23 @@ public class Usuario implements Serializable, EntidadeBase {
 	public void setTipoUsuario(TipoUsuario tipoUsuario) {
 		this.tipoUsuario = tipoUsuario;
 	}
+	
+	public Integer getStatus() {
+		return this.status;
+	}
+	
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	
+	public Date getDataStatus() {
+		return this.dataStatus;
+	}
+	
+	public void setDataStatus(Date dataStatus) {
+		this.dataStatus = dataStatus;
+	}
+	
 
 	@Override
 	public String toString() {

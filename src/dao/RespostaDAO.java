@@ -10,6 +10,7 @@ import java.util.List;
 
 import modelo.Pesquisador;
 import modelo.Resposta;
+import modelo.Comentario;
 
 public class RespostaDAO implements InterfaceRespostaDAO {
 
@@ -83,9 +84,11 @@ public class RespostaDAO implements InterfaceRespostaDAO {
 			
 			PesquisadorDAO daoPesquisador = new PesquisadorDAO(conexao);
 			Pesquisador pesquisador = daoPesquisador.PegarPeloID(idPesquisador);
-						
 			
-			listaRespostas.add(new Resposta(id, desc, validacoes, status, desafio, pesquisador, dt_cadastro, novaEquacao, titulo, justificativa));
+			ComentarioDAO daoComentario = new ComentarioDAO(conexao);
+			List<Comentario> comentarios = daoComentario.TodosComentariosDaResposta(id);
+			
+			listaRespostas.add(new Resposta(id, desc, validacoes, status, desafio, pesquisador, dt_cadastro, novaEquacao, titulo, justificativa, comentarios));
 		}
 		
 		return listaRespostas;
@@ -180,8 +183,11 @@ public class RespostaDAO implements InterfaceRespostaDAO {
 			
 			PesquisadorDAO daoPesquisador = new PesquisadorDAO(conexao);
 			Pesquisador pesquisador = daoPesquisador.PegarPeloID(idPesquisador);
-            
-            return new Resposta(id, desc, validacoes, status, desafio, pesquisador, dt_cadastro, novaEquacao, titulo, justificativa);
+         
+			ComentarioDAO daoComentario = new ComentarioDAO(conexao);
+			List<Comentario> comentarios = daoComentario.TodosComentariosDaResposta(id);
+			
+            return new Resposta(id, desc, validacoes, status, desafio, pesquisador, dt_cadastro, novaEquacao, titulo, justificativa, comentarios);
 		}
 		else {
 			return null;
@@ -194,7 +200,7 @@ public class RespostaDAO implements InterfaceRespostaDAO {
 		ResultSet rs = null;
 		List<Resposta> listaRespostas = new ArrayList<Resposta>();
 
-		String comando = "select * from resposta where desafio = ? order by id";
+		String comando = "SELECT * FROM resposta WHERE desafio = ? ORDER BY status DESC,id";
 
 		PreparedStatement ps = this.conexao.prepareStatement(comando);
 		
@@ -216,9 +222,11 @@ public class RespostaDAO implements InterfaceRespostaDAO {
 			
 			PesquisadorDAO daoPesquisador = new PesquisadorDAO(conexao);
 			Pesquisador pesquisador = daoPesquisador.PegarPeloID(idPesquisador);
-						
 			
-			listaRespostas.add(new Resposta(id, desc, validacoes, status, desafio, pesquisador, dt_cadastro, novaEquacao, titulo, justificativa));
+			ComentarioDAO daoComentario = new ComentarioDAO(conexao);
+			List<Comentario> comentarios = daoComentario.TodosComentariosDaResposta(id);
+			
+			listaRespostas.add(new Resposta(id, desc, validacoes, status, desafio, pesquisador, dt_cadastro, novaEquacao, titulo, justificativa, comentarios));
 		}
 		
 		return listaRespostas;

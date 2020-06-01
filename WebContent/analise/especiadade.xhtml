@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/n_template.xhtml"
+	xmlns:b="http://bootsfaces.net/ui">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/n_menu.xhtml" />
+	</ui:define>
+
+
+	<ui:define name="conteudo">
+		<h:form id="f">
+			<b:row>
+				<b:column>
+					<b:well>
+						<h3>#{msg['especialidade.lista']}</h3>
+     		 			#{msg['especialidade.lista.info']}
+    				</b:well>
+				</b:column>
+			</b:row>
+			<b:row>
+				<b:row>
+					<b:column>
+						<b:messages></b:messages>
+					</b:column>
+				</b:row>
+
+				<b:dataTable value="#{especialidadeBean.especialidades}"
+					var="especialidade">
+
+					<b:dataTableColumn value="#{especialidade.id}" />
+
+					<b:dataTableColumn label="#{msg['especialidade.nome']}"
+						value="#{especialidade.nome}" />
+
+					<b:dataTableColumn label="#{msg['acoes']}">
+					
+						<b:commandButton value="#{msg['editar']}" icon="pencil"
+							action="#{especialidadeBean.PrepararEditarEspecialidade(especialidade)}"
+							title="#{msg['especialidade.editar']}" style="width:85px;">
+						</b:commandButton>
+					
+						<b:commandButton value="#{msg['excluir']}" icon="trash"
+							actionListener="#{especialidadeBean.PrepararExcluirEspecialidade(especialidade)}"
+							oncomplete="$('.modalPseudoClass').modal('show')"
+							title="#{msg['especialidade.excluir']}" style="width:85px;">
+							<f:ajax execute="@this" render="@form" />
+						</b:commandButton>
+					</b:dataTableColumn>
+
+				</b:dataTable>
+
+			</b:row>
+
+			<b:modal id="amodal" title="#{msg['especialidade.excluir']}"
+				styleClass="modalPseudoClass" style="margin-top:200px;">
+
+				<h:panelGrid columns="2">
+
+					<h:outputText value="Id: " />
+					<h:outputText value="#{especialidadeBean.especialidade.id}" />
+					<h:outputText value="#{msg['especialidade.nome']}:" />
+					<h:outputText value="#{especialidadeBean.especialidade.nome}" />
+
+					<b:commandButton value="#{msg['excluir']}"
+						action="#{especialidadeBean.ExcluirEspecialidade(especialidadeBean.especialidade)}"
+						onclick="$('.modalPseudoClass').modal('hide')"/>
+
+					<b:button value="#{msg['cancelar']}"
+						onclick="$('.modalPseudoClass').modal('hide')" />
+
+
+				</h:panelGrid>
+
+			</b:modal>
+
+		</h:form>
+
+
+
+	</ui:define>
+
+	<ui:define name="rodape">
+		<ui:include src="/includes/n_rodape.xhtml" />
+	</ui:define>
+
+</ui:composition>

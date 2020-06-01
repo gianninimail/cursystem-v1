@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+<body>
+	<ui:composition>
+		<div class="menu">
+			<b:container>
+				<h:form>
+					<b:navBar brand="CurSystem"
+						brand-img="#{request.contextPath}/resources/imagens/icon-redessociais.png"
+						brand-img-style="width:32px" inverse="true"
+						brandHref="#{request.contextPath}/default.jsf" fluid="true">
+						<b:navbarLinks rendered="#{not empty USUARIOLogado}">
+							<b:dropMenu value="#{msg['menu.usuarios']}"
+								rendered="#{USUARIOLogado.tipoUsuario.id == 1}">
+								<b:navLink value="#{msg['menu.usuarios.cadastrar']}"
+									href="#{request.contextPath}/cadastro/cad_usuario.jsf"
+									tooltip="#{msg['menu.usuarios.cadastrar.tooltip']}"></b:navLink>
+								<b:navLink value="#{msg['menu.usuarios.pesquisar']}"
+									href="#{request.contextPath}/analise/usuario.jsf"
+									tooltip="#{msg['menu.usuarios.pesquisar.tooltip']}"></b:navLink>
+								<b:navLink value="#{msg['menu.usuarios.aprovar']}"
+									href="#{request.contextPath}/analise/pen_usuario.jsf"
+									tooltip="#{msg['menu.usuarios.aprovar.tooltip']}"></b:navLink>
+							</b:dropMenu>
+
+							<b:dropMenu value="#{msg['menu.especialidades']}"
+								rendered="#{USUARIOLogado.tipoUsuario.id == 1}">
+								<b:navLink value="#{msg['menu.especialidades.cadastrar']}"
+									href="#{request.contextPath}/cadastro/cad_especiadade.jsf"
+									tooltip="#{msg['menu.especialidades.cadastrar.tooltip']}"></b:navLink>
+								<b:navLink value="#{msg['menu.especialidades.pesquisar']}"
+									href="#{request.contextPath}/analise/especiadade.jsf"
+									tooltip="#{msg['menu.especialidades.pesquisar.tooltip']}"></b:navLink>
+							</b:dropMenu>
+
+							<b:dropMenu value="#{msg['menu.desafios']}">
+								<b:navLink value="#{msg['menu.desafios.cadastrar']}"
+									href="#{request.contextPath}/cadastro/cad_desafio.jsf"
+									tooltip="#{msg['menu.desafios.cadastrar.tooltip']}"></b:navLink>
+								<b:navLink value="#{msg['menu.desafios.meus']}"
+									href="#{request.contextPath}/analise/meu_desafio.jsf"
+									tooltip="#{msg['menu.desafios.meus.tooltip']}"></b:navLink>
+								<b:navLink value="#{msg['menu.desafios.visualizar']}"
+									href="#{request.contextPath}/index.jsf"
+									tooltip="#{msg['menu.desafios.visualizar.tooltip']}"></b:navLink>
+								<b:navLink value="#{msg['menu.desafios.pesquisar']}"
+									href="#{request.contextPath}/analise/desafio.jsf"
+									tooltip="#{msg['menu.desafios.pesquisar.tooltip']}"
+									rendered="#{USUARIOLogado.tipoUsuario.id == 1}"></b:navLink>
+							</b:dropMenu>
+						</b:navbarLinks>
+						<!-- Following line is needed for TBS 3.0.1 (panel content overflow issue) -->
+						<b:navbarLinks pull="right">
+							<b:dropMenu value="#{msg['linguagem.idioma']}" icon="globe" icon-size="lg">
+								<b:navCommandLink value="#{msg['linguagem.portugues']}"
+									disabled="#{msg['linguagem.portuguesdisabled']}"
+									actionListener="#{lingua.trocarLingua('pt')}"
+									title="#{msg['linguagem.portugues']}"/>
+								<b:navCommandLink value="#{msg['linguagem.ingles']}"
+									disabled="#{msg['linguagem.inglesdisabled']}"
+									actionListener="#{lingua.trocarLingua('en')}"
+									title="#{msg['linguagem.ingles']}" />
+							</b:dropMenu>
+						</b:navbarLinks>
+						<b:navbarLinks pull="right">
+							<b:navLink value="#{msg['menu.ajuda']}"
+								href="#{request.contextPath}/ajuda.jsf"
+								tooltip="#{msg['menu.ajuda.tooltip']}"></b:navLink>
+						</b:navbarLinks>
+						<b:navbarLinks pull="right" rendered="#{not empty USUARIOLogado}">
+							<b:dropMenu value="#{USUARIOLogado.nome}">
+								<b:navCommandLink value="#{msg['menu.usuario.meusdados']}"
+									action="#{usuarioBean.PrepararEditarMeuUsuario(USUARIOLogado)}"
+									tooltip="#{msg['menu.usuario.meusdados.tooltip']}" />
+								<b:navLink value="#{msg['menu.usuario.alterarsenha']}"
+									href="#{request.contextPath}/alteracao/alt_senha.jsf"
+									tooltip="#{msg['menu.usuario.alterarsenha.tooltip']}"></b:navLink>
+								<b:navCommandLink value="#{msg['menu.usuario.sair']}"
+									action="#{autenticadorBean.registrarSaida}"
+									tooltip="#{msg['menu.usuario.sair.tooltip']}" />
+							</b:dropMenu>
+						</b:navbarLinks>
+
+					</b:navBar>
+				</h:form>
+			</b:container>
+		</div>
+	</ui:composition>
+</body>
+</html>

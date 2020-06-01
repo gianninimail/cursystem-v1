@@ -1,6 +1,7 @@
 package modelo;
 
 import java.util.Date;
+import java.util.List;
 
 import util.ModeloBase;
 
@@ -17,13 +18,14 @@ public class Resposta extends ModeloBase {
 	private String novaEquacao;
 	private String titulo;
 	private String justificativa;
+	private List<Comentario> comentarios;
 	
 	public Resposta() {
 		super();
 		this.id = new Long(0);
 	}
 
-	public Resposta(Long id, String desc, int validacoes, Boolean status, Long desafio, Pesquisador pesquisador, Date dt_cadastro, String _novaEquacao, String _titulo, String _justificativa) {
+	public Resposta(Long id, String desc, int validacoes, Boolean status, Long desafio, Pesquisador pesquisador, Date dt_cadastro, String _novaEquacao, String _titulo, String _justificativa, List<Comentario> comentarios) {
 		super();
 		this.id = id;
 		this.desc = desc;
@@ -35,6 +37,7 @@ public class Resposta extends ModeloBase {
 		this.novaEquacao = _novaEquacao;
 		this.titulo = _titulo;
 		this.justificativa = _justificativa;
+		this.comentarios = comentarios;
 	}
 
 	public Long getId() {
@@ -132,6 +135,14 @@ public class Resposta extends ModeloBase {
 
 	public void setJustificativa(String justificativa) {
 		this.justificativa = justificativa;
+	}
+	
+	public List<Comentario> getComentarios() {
+		return comentarios;
+	}
+
+	public void setComentarios(List<Comentario> comentarios) {
+		this.comentarios = comentarios;
 	}
 
 	@Override

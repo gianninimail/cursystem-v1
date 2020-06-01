@@ -1,6 +1,7 @@
 package controle;
 
 import java.sql.Connection;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,9 +10,12 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.model.ListDataModel;
 
+import javax.faces.context.FacesContext;
+
 import dao.DesafioDAO;
 import dao.EspecialidadeDAO;
 import dao.PesquisadorDAO;
+import dao.RespostaDAO;
 import modelo.Desafio;
 import modelo.Especialidade;
 import modelo.Pesquisador;
@@ -19,20 +23,25 @@ import modelo.Resposta;
 import modelo.Status;
 import modelo.Usuario;
 import util.EmailUtil;
+import util.BeanBase;
 import util.FabricaConexao;
 import util.JSFUtil;
 import util.SessaoUtil;
 import util.TipoObjeto;
 import util.TipoOperacao;
 
+@SuppressWarnings("serial")
 @ManagedBean
-public class DesafioBean {
+public class DesafioBean extends BeanBase {
 
 	private String msgOps;
 	
 	Desafio desafio;
 	private List<Desafio> listaDesafios;
+	private List<Desafio> listaDesafiosMeus;
+	private List<Desafio> listaDesafiosFiltrados;
 	private ListDataModel<Desafio> desafios;
+	private ListDataModel<Desafio> desafiosMeus;
 	private ListDataModel<Desafio> desafiosFiltrados;
 	
 	private ListDataModel<Resposta> respostas;
@@ -41,9 +50,13 @@ public class DesafioBean {
 	
 	private List<Especialidade> especialidades;
 	
+	private Pesquisador pesquisador;
+	
+	private Resposta resposta;
+	
 	public DesafioBean() {
 		this.desafio = new Desafio();
-		this.desafio.setTitulo("No challenges selected");
+		//this.desafio.setTitulo("No challenges selected"); Khalil Comentado
 	}
 	
 	public Desafio getDesafio() {
@@ -64,6 +77,10 @@ public class DesafioBean {
 	
 	public ListDataModel<Desafio> getDesafios() {
 		return desafios;
+	}
+	
+	public ListDataModel<Desafio> getDesafiosMeus() {
+		return desafiosMeus;
 	}
 	
 	public void setDesafios(ListDataModel<Desafio> desafios) {
@@ -113,7 +130,11 @@ public class DesafioBean {
 	//ACESSO AO BANCO DE DADOS
 	public void CadastrarDesafio() {
 		try {
+			
 			this.desafio.setDataCadastro(new Date());
+			
+			modelo.Status status = new Status(2, "OPEN");
+			this.desafio.setStatus(status);
 
 			FabricaConexao fabrica = new FabricaConexao();
 			Connection conexao = fabrica.fazerConexao();
@@ -125,9 +146,11 @@ public class DesafioBean {
 
 			fabrica.fecharConexao();
 			
-			EnviarEmailPesquisadoresDoProjeto(TipoOperacao.CREATE, TipoObjeto.DESAFIO);
-
-			JSFUtil.adicionarMensagemSucesso("Challenge successfully registered!");
+			EnviarEmailPesquisadoresDoProjeto(TipoOperacao.CREATE, TipoObjeto.DESAFIO); // Khalil - Comentado em Teste local - No servidor descomentar
+			
+			JSFUtil.adicionarMensagemSucesso(getMensagem("desafio.sucesso"));
+			
+			desafio = new Desafio();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -174,9 +197,9 @@ public class DesafioBean {
 
 			fabrica.fecharConexao();
 
-			EnviarEmailPesquisadoresDoProjeto(TipoOperacao.DELETE, TipoObjeto.DESAFIO);
+			EnviarEmailPesquisadoresDoProjeto(TipoOperacao.DELETE, TipoObjeto.DESAFIO); // Khalil - Comentado em Teste local - No servidor descomentar
 			
-			JSFUtil.adicionarMensagemSucesso("Challenge deleted successfully!");
+			JSFUtil.adicionarMensagemSucesso(getMensagem("desafio.excluido"));
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -188,7 +211,20 @@ public class DesafioBean {
 	{
 		this.desafio = desafios.getRowData();
 	}
+
+	public void PrepararExcluirDesafio(Desafio desafio) 
+	{
+		try {
+
+			this.desafio = desafio;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			JSFUtil.adicionarMensagemErro(e.getMessage());
+		}
+	}	
 	
+	@Deprecated
 	public void EditarDesafio() {
 		try {
 			
@@ -212,11 +248,84 @@ public class DesafioBean {
 		}
 	}
 	
+	public void EditarDesafio(Desafio desafio) {
+		try {
+			String msgSucesso = "";
+
+			FabricaConexao fabrica = new FabricaConexao();
+			Connection conexao = fabrica.fazerConexao();
+
+			DesafioDAO dao = new DesafioDAO(conexao);
+			dao.Atualizar(desafio);
+
+			fabrica.fecharConexao();
+			
+			EnviarEmailPesquisadoresDoProjeto(TipoOperacao.UPDATE, TipoObjeto.DESAFIO); // Khalil - Comentado em Teste local - No servidor descomentar
+
+			msgSucesso = getMensagem("desafio.editado");
+			JSFUtil.adicionarMensagemSucesso(msgSucesso);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			JSFUtil.adicionarMensagemErro(e.getMessage());
+		}
+	}
+	
 	public void PrepararEditar() 
 	{
 		this.desafio = desafios.getRowData();
 		
 		FiltrarPesquisadores();
+	}
+
+	public String PrepararEditarDesafio(Desafio desafio) 
+	{
+
+		try {
+			
+			Map<String,Object> sessionMapObj = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+			
+			sessionMapObj.put("editarDesafio", desafio);
+			
+			FiltrarPesquisadoresEditar(desafio);
+			
+			return "/alteracao/alt_desafio.jsf?faces-redirect=true";
+
+		} catch (Exception e) {
+			return null;
+		}
+		
+	}
+
+	public String PrepararRespostas(Desafio desafio) 
+	{
+
+		try {
+			
+			Map<String,Object> sessionMapObj = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+			
+			sessionMapObj.put("editarDesafio", desafio);
+			
+			FiltrarPesquisadoresEditar(desafio);
+			
+			this.resposta = new Resposta();
+			
+			this.resposta.setDesafio(desafio.getId());
+			this.resposta.setStatus(false);
+			this.resposta.setValidacoes(0);
+			
+			Pesquisador pesquisador = new Pesquisador(SessaoUtil.pegarUsuarioSessao());
+			
+			this.resposta.setPesquisador(pesquisador);
+			
+			sessionMapObj.put("respostaDesafio", this.resposta);
+
+			return "/analise/resposta.jsf?faces-redirect=true";
+
+		} catch (Exception e) {
+			return null;
+		}
+		
 	}
 	
 	public void PrepararVerInformcoes() 
@@ -287,6 +396,26 @@ public class DesafioBean {
 			JSFUtil.adicionarMensagemErro(e.getMessage());
 		}
 	}
+	
+	public void FiltrarPesquisadoresEditar(Desafio desafio) {
+		try {
+
+			FabricaConexao fabrica = new FabricaConexao();
+			Connection conexao = fabrica.fazerConexao();
+
+			PesquisadorDAO dao = new PesquisadorDAO(conexao);
+			
+			Map<String,Object> sessionMapObj = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+			
+			sessionMapObj.put("editarListaPesquisadores", dao.listarTodosPorEspecialidade(desafio.getEspecialidade().getId()));
+
+			fabrica.fecharConexao();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			JSFUtil.adicionarMensagemErro(e.getMessage());
+		}
+	}	
 	
 	//FIM DO ACESSO AO BANCO DE DADOS
 	
@@ -369,6 +498,24 @@ public class DesafioBean {
 				this.listaDesafios = dao.listarTodosPorPesquisador(user.getId());
 			}
 			
+			this.listaDesafiosMeus = dao.listarTodosPorPesquisador(user.getId());
+			
+			
+			pesquisador = new Pesquisador();
+			PesquisadorDAO pesquisadorDao = new PesquisadorDAO(conexao);
+			pesquisador = pesquisadorDao.PegarPeloID(user.getId());
+			
+			if (pesquisador==null) {
+				pesquisador = new Pesquisador();
+			}
+			
+			if (pesquisador.getEspecialidade().getId().equals(new Long(3))){
+				this.listaDesafiosFiltrados = dao.listarTodos();
+			}
+			else {
+				this.listaDesafiosFiltrados = dao.listarTodosPorEspecialidade(pesquisador.getEspecialidade().getId());
+			}
+				
 			//this.respostas = new ListDataModel<Resposta>(this.desafio.getRespostas());
 			EspecialidadeDAO daoEsp = new EspecialidadeDAO(conexao);
 			this.especialidades = daoEsp.listarTodosAtivos();
@@ -376,6 +523,8 @@ public class DesafioBean {
 			fabrica.fecharConexao();
 			
 			desafios = new ListDataModel<Desafio>(listaDesafios);
+			desafiosMeus = new ListDataModel<Desafio>(listaDesafiosMeus);
+			desafiosFiltrados = new ListDataModel<Desafio>(listaDesafiosFiltrados);
 			
 		} catch (Exception e) {
 			e.printStackTrace();

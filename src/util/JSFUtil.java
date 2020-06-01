@@ -8,22 +8,55 @@ public class JSFUtil {
 	public static void adicionarMensagemSucesso(String _msg)
 	{
 		//severity - tipo da mensagem (info, warning, error, fatal)
-		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "SUCCESS!", _msg);
+		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "", _msg);
 		
-		//Pega a área de memoria temporaria
+		//Pega a area de memoria temporaria
 		FacesContext contexto = FacesContext.getCurrentInstance();
 		
 		contexto.addMessage(null, msg);
+		
+		//exibe mensagem mesmo apÃ³s redirect
+		FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
 	}
+	
+	public static void adicionarMensagemAlerta(String _msg)
+	{
+		//severity - tipo da mensagem (info, warning, error, fatal)
+		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "", _msg);
+		
+		//Pega a ï¿½rea de memoria temporaria
+		FacesContext contexto = FacesContext.getCurrentInstance();
+		
+		contexto.addMessage(null, msg);
+		
+		//exibe mensagem mesmo apÃ³s redirect
+		FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+	}
+	
 	
 	public static void adicionarMensagemErro(String _msg)
 	{
 		//severity - tipo da mensagem (info, warning, error, fatal)
-		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR!!!", _msg);
+		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "", _msg);
 		
-		//Pega a área de memoria temporaria
+		//Pega a ï¿½rea de memoria temporaria
 		FacesContext contexto = FacesContext.getCurrentInstance();
 		
 		contexto.addMessage(null, msg);
+		
+		//exibe mensagem mesmo apÃ³s redirect
+		FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+	}
+	
+	public static void adicionarMensagemErroComponente(String _id ,String _msg)
+	{
+		//severity - tipo da mensagem (info, warning, error, fatal)
+		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "", _msg);
+		
+		//Pega a ï¿½rea de memoria temporaria
+		FacesContext contexto = FacesContext.getCurrentInstance();
+		
+		contexto.addMessage(_id, msg);
+		
 	}
 }

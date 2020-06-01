@@ -20,19 +20,19 @@ public class ControleDeAcesso implements Filter {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpSession session = req.getSession();
 
-		if ((session.getAttribute("USUARIOLogado") != null) || (req.getRequestURI().endsWith("login.jsf")) || (req.getRequestURI().contains("javax.faces.resource/"))) {
+		//if ((session.getAttribute("USUARIOLogado") != null) || (req.getRequestURI().endsWith("login.jsf")) || (req.getRequestURI().contains("javax.faces.resource/"))) {
 
 			//redireciona("/Logado.xhtml", response);
 			chain.doFilter(request, response);
-		}
+		//}
 //		if ((session.getAttribute("USUARIOLogado") != null) || (req.getRequestURI().endsWith("login.jsf")) || (req.getRequestURI().contains("javax.faces.resource/"))) {
 //
 //			//redireciona("/Logado.xhtml", response);
 //			chain.doFilter(request, response);
 //		}
-		else {
-			redireciona("/CurSystem/login.jsf?acesso=false", response);
-		}
+//		else {
+//			redireciona("/CurSystem/login.jsf?acesso=false", response);
+//		}
 
 	}
 

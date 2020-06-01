@@ -11,15 +11,16 @@ public class FabricaConexao {
 	public Connection fazerConexao() {
 		
 		try {
-			String driverName = "com.mysql.jdbc.Driver";     
+			String driverName = "com.mysql.jdbc.Driver";//"com.mysql.cj.jdbc.Driver"
 			
 			Class.forName(driverName);
 			
 			Properties info = new Properties();
 			info.setProperty("user", "cursystem");
 			info.setProperty("password", "ccbh4851");
-			info.setProperty("useSSL", "false");
+			info.setProperty("useSSL", "false"); // Khalil - Comentado em Teste local - No servidor descomentar
 			info.setProperty("autoReconnect", "true");
+			//info.setProperty("serverTimezone", "UTC"); // Khalil - Criado em Teste local - No servidor comentar
 			
 			conexao = DriverManager.getConnection("jdbc:mysql://localhost:3306/cursystem", info);
 			        

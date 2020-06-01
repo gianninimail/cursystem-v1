@@ -15,6 +15,10 @@ public interface InterfacePesquisadorDAO {
 	
 	public void Editar(Pesquisador _pesquisador) throws SQLException;
 	
+	public void EditarExiste(Pesquisador _pesquisador) throws SQLException;
+	
+	public void Aprovar(Pesquisador _pesquisador) throws SQLException;
+	
 	public void Excluir(Pesquisador _pesquisador) throws SQLException;
 	
 	public Long PegarProximoID() throws SQLException;
@@ -24,4 +28,6 @@ public interface InterfacePesquisadorDAO {
 	public List<Usuario> listarUsuariosParaPesquisador();
 
 	List<Pesquisador> listarTodosPorEspecialidade(Long _idEspecialidade) throws SQLException;
+	
+	public List<Pesquisador> listarPesquisadoresPendentes() throws SQLException;
 }

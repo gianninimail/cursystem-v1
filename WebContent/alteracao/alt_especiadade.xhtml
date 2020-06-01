@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/n_template.xhtml"
+	xmlns:b="http://bootsfaces.net/ui">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/n_menu.xhtml" />
+	</ui:define>
+
+
+	<ui:define name="conteudo">
+		<h:form id="fAlterar">
+			<b:row>
+				<b:column>
+					<b:well>
+						<h3>#{msg['especialidade.editacao']}</h3>
+     		 			#{msg['especialidade.editar.info']}
+    				</b:well>
+				</b:column>
+			</b:row>
+			<b:row>
+				<b:row>
+					<b:column>
+						<b:messages></b:messages>
+					</b:column>
+				</b:row>
+				<b:column colSm="6">
+					<b:row>
+						<b:column>
+							<b:inputText label="Id" id="id"
+								value="#{editarEspecialidade.id}" disabled="true"/>
+						</b:column>
+					</b:row>
+
+					<b:row>
+						<b:column>
+							<b:inputText label="#{msg['especialidade.nome']}" id="nome"
+								value="#{editarEspecialidade.nome}" maxlength="49"
+								required="true"
+								requiredMessage="#{msg['especialidade.nome.obrigatorio']}" />
+						</b:column>
+					</b:row>
+
+					<b:row>
+						<b:column>
+							<b:commandButton id="bt_editar"
+								value="#{msg['especialidade.editar.especialidade']}"
+								action="#{especialidadeBean.EditarEspecialidade(editarEspecialidade)}"
+								look="success" size="lg" />
+						</b:column>
+					</b:row>
+				</b:column>
+			</b:row>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="rodape">
+		<ui:include src="/includes/n_rodape.xhtml" />
+	</ui:define>
+
+</ui:composition>

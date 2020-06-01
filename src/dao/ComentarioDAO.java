@@ -29,7 +29,7 @@ public class ComentarioDAO implements InterfaceComentarioDAO {
 		PreparedStatement ps = this.conexao.prepareStatement(comando);
 		
 		ps.setString(1, _comentario.getTexto());
-		ps.setLong(2, _comentario.getResposta().getId());
+		ps.setLong(2, _comentario.getResposta());
 		ps.setLong(3, _comentario.getPesquisador().getId());//TROCAR
 		ps.setDate(4, new Date(_comentario.getDataCadastro().getTime()));
 		
@@ -55,14 +55,11 @@ public class ComentarioDAO implements InterfaceComentarioDAO {
 			Long idPesquisador = rs.getLong(4);
 			Date dtCasdastro = rs.getDate(5);
 			
-			RespostaDAO daoResposta = new RespostaDAO(this.conexao);
-			Resposta resposta = daoResposta.PegarPeloID(idResposta);
-			
 			PesquisadorDAO daoPesquisador = new PesquisadorDAO(this.conexao);
 			Pesquisador pesquisador = daoPesquisador.PegarPeloID(idPesquisador);
 						
 			
-			listaComentarios.add(new Comentario(id, texto, resposta, pesquisador, dtCasdastro));
+			listaComentarios.add(new Comentario(id, texto, idResposta, pesquisador, dtCasdastro));
 		}
 		
 		return listaComentarios;
@@ -113,13 +110,10 @@ public class ComentarioDAO implements InterfaceComentarioDAO {
 			Long idPesquisador = rs.getLong(4);
 			Date dtCasdastro = rs.getDate(5);
 			
-			RespostaDAO daoResposta = new RespostaDAO(this.conexao);
-			Resposta resposta = daoResposta.PegarPeloID(idResposta);
-			
 			PesquisadorDAO daoPesquisador = new PesquisadorDAO(this.conexao);
 			Pesquisador pesquisador = daoPesquisador.PegarPeloID(idPesquisador);
             
-            return new Comentario(id, texto, resposta, pesquisador, dtCasdastro);
+            return new Comentario(id, texto, idResposta, pesquisador, dtCasdastro);
 		}
 		else {
 			return null;
@@ -143,14 +137,44 @@ public class ComentarioDAO implements InterfaceComentarioDAO {
 		while (rs.next()) {
 			Long id = rs.getLong(1);
 			String texto = rs.getString(2);
-			//Long idResposta = rs.getLong(3);
+			Long idResposta = rs.getLong(3);
 			Long idPesquisador = rs.getLong(4);
 			Date dtCasdastro = rs.getDate(5);
 			
 			PesquisadorDAO daoPesquisador = new PesquisadorDAO(this.conexao);
 			Pesquisador pesquisador = daoPesquisador.PegarPeloID(idPesquisador);
 						
-			listaComentarios.add(new Comentario(id, texto, _resposta, pesquisador, dtCasdastro));
+			listaComentarios.add(new Comentario(id, texto, idResposta, pesquisador, dtCasdastro));
+		}
+		
+		return listaComentarios;
+	}
+	
+	@Override
+	public List<Comentario> TodosComentariosDaResposta(Long _idResposta) throws SQLException {
+		
+		ResultSet rs = null;
+		List<Comentario> listaComentarios = new ArrayList<Comentario>();
+
+		String comando = "select * from comentario where resposta = ? order by id";
+
+		PreparedStatement ps = this.conexao.prepareStatement(comando);
+		
+		ps.setLong(1, _idResposta);
+
+		rs = ps.executeQuery();
+
+		while (rs.next()) {
+			Long id = rs.getLong(1);
+			String texto = rs.getString(2);
+			Long idResposta = rs.getLong(3);
+			Long idPesquisador = rs.getLong(4);
+			Date dtCasdastro = rs.getDate(5);
+			
+			PesquisadorDAO daoPesquisador = new PesquisadorDAO(this.conexao);
+			Pesquisador pesquisador = daoPesquisador.PegarPeloID(idPesquisador);
+						
+			listaComentarios.add(new Comentario(id, texto, idResposta, pesquisador, dtCasdastro));
 		}
 		
 		return listaComentarios;

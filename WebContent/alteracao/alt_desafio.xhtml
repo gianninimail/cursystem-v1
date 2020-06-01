@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/n_template.xhtml"
+	xmlns:b="http://bootsfaces.net/ui">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/n_menu.xhtml" />
+	</ui:define>
+
+
+	<ui:define name="conteudo">
+		<h:form id="fCadastrar">
+			<b:row>
+				<b:column>
+					<b:well>
+						<h3>#{msg['desafio.editacao']}</h3>
+     		 			#{msg['desafio.editar.info']}
+    				</b:well>
+				</b:column>
+			</b:row>
+			<b:row>
+				<b:row>
+					<b:column>
+						<b:messages></b:messages>
+					</b:column>
+				</b:row>
+				<b:column colSm="6">
+
+					<b:row>
+						<b:column>
+							<b:inputText label="Id" id="id" value="#{editarDesafio.id}"
+								disabled="true" />
+						</b:column>
+					</b:row>
+					<b:row>
+						<b:column>
+							<b:inputText label="#{msg['desafio.titulo']}" id="nome"
+								value="#{editarDesafio.titulo}" maxlength="49" required="true"
+								requiredMessage="#{msg['desafio.titulo.obrigatorio']}" />
+						</b:column>
+					</b:row>
+					<b:row>
+						<b:column>
+							<b:inputText label="#{msg['desafio.status']}" id="status"
+								value="#{editarDesafio.status.nome}" disabled="true" />
+						</b:column>
+					</b:row>
+					<b:row id="selectEspecialidade">
+						<b:column>
+							<b:selectOneMenu label="#{msg['especialidade']}"
+								id="especialidade" required="true"
+								converter="especialidadeConverter"
+								value="#{editarDesafio.especialidade}">
+								<f:selectItems value="#{desafioBean.especialidades}" var="esp"
+									itemValue="#{esp}" itemLabel="#{esp.nome}" />
+								<f:ajax
+									listener="#{desafioBean.FiltrarPesquisadoresEditar(editarDesafio)}"
+									render="usuario" />
+							</b:selectOneMenu>
+						</b:column>
+					</b:row>
+					<b:row>
+						<b:column>
+							<b:selectOneMenu label="#{msg['dono']}" id="usuario"
+								required="true" converter="usuarioConverter"
+								value="#{editarDesafio.usuario}">
+								<f:selectItem itemLabel="#{editarDesafio.usuario.nome}"
+									itemValue="#{editarDesafio.usuario}" />
+								<f:selectItems value="#{editarListaPesquisadores}"
+									var="pesquisador" itemValue="#{pesquisador}"
+									itemLabel="#{pesquisador.nome}" />
+							</b:selectOneMenu>
+						</b:column>
+					</b:row>
+					<b:row>
+						<b:column>
+							<b:inputTextarea label="#{msg['desafio.descricao']}" id="desc"
+								value="#{editarDesafio.desc}" rows="6" cols="45" />
+						</b:column>
+					</b:row>
+
+					<b:row>
+						<b:column>
+							<b:commandButton id="bt_editar"
+								value="#{msg['desafio.editar.desafio']}"
+								action="#{desafioBean.EditarDesafio(editarDesafio)}"
+								look="success" size="lg" />
+						</b:column>
+					</b:row>
+				</b:column>
+				<b:column colSm="6">
+					<b:panel title="#{msg['usuario.informacao']}" collapsible="false">
+						<b:row>
+							<b:column style="text-align:center">
+								<svg fill="#0f90b8" viewBox="0 0 12 16" version="1.1" width="12"
+									height="16" aria-hidden="true"> <path fill-rule="evenodd"
+									d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path> </svg>
+								<span style="margin-left: 5px;">#{msg['desafio.ingles']}</span>
+							</b:column>
+						</b:row>
+						<br />
+						<b:row>
+							<b:column style="text-align:center">
+								<svg fill="#0f90b8" viewBox="0 0 12 16" version="1.1" width="12"
+									height="16" aria-hidden="true"> <path fill-rule="evenodd"
+									d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path> </svg>
+								<span style="margin-left: 5px;">#{msg['desafio.ferramenta.info']} <a href="#" onClick="window.open('https://translate.google.com.br/#view=home&amp;op=translate&amp;sl=pt&amp;tl=en&amp;text=' + document.getElementById('input_fCadastrar:nome').value + '%0A' + document.getElementById('input_fCadastrar:desc').value, '_blank')">#{msg['desafio.ferramenta.hyperlink']}</a></span>
+							</b:column>
+						</b:row>
+					</b:panel>
+				</b:column>
+			</b:row>
+			<br />
+			<b:row>
+				<b:column>
+					<b:well>
+						<h3>#{msg['resposta.lista']}</h3>
+     		 			#{msg['resposta.lista.info']}
+    				</b:well>
+				</b:column>
+			</b:row>
+			<b:row>
+				<b:row>
+					<b:column>
+						<b:messages></b:messages>
+					</b:column>
+				</b:row>
+			</b:row>
+
+			<b:dataTable value="#{editarDesafio.respostas}" var="resposta">
+				<b:dataTableColumn value="#{resposta.id}" />
+				<b:dataTableColumn label="#{msg['pesquisador']}"
+					value="#{resposta.pesquisador.nome}" />
+				<b:dataTableColumn>
+					<f:facet name="header">
+						<ul
+							style="margin-bottom: 0; list-style-type: none; padding-left: 0">
+							<li>#{msg['resposta.titulo']}</li>
+							<li>#{msg['resposta.descricao']}</li>
+						</ul>
+					</f:facet>
+					<b>#{resposta.titulo}</b>
+					<br />
+					#{resposta.desc}
+				</b:dataTableColumn>
+			</b:dataTable>
+
+		</h:form>
+	</ui:define>
+
+	<ui:define name="rodape">
+		<ui:include src="/includes/n_rodape.xhtml" />
+	</ui:define>
+
+</ui:composition>

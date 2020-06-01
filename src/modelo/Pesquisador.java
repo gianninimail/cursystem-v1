@@ -7,22 +7,31 @@ public class Pesquisador extends Usuario {
 	private static final long serialVersionUID = 1L;
 	private String instituto;
 	private Especialidade especialidade;
+	private Long idEspecialidade;
 	//private int idEspecialidade;
+
+	public Long getIdEspecialidade() {
+		return idEspecialidade;
+	}
+
+	public void setIdEspecialidade(Long idEspecialidade) {
+		this.idEspecialidade = idEspecialidade;
+	}
 
 	public Pesquisador() {
 		super();
 		this.especialidade = new Especialidade();
 	}
 	
-	public Pesquisador(Long id, String nome, String login, String senha, String tel, String email, Date dtCadastro, String instituto, Especialidade especialidade, TipoUsuario tipoUsuario) {
-		super(id, nome, login, senha, tel, email, dtCadastro, tipoUsuario);
+	public Pesquisador(Long id, String nome, String login, String senha, String tel, String email, Date dtCadastro, String instituto, Especialidade especialidade, TipoUsuario tipoUsuario, Integer status, Date dtStatus) {
+		super(id, nome, login, senha, tel, email, dtCadastro, tipoUsuario, status, dtStatus);
 		this.instituto = instituto;
 		this.especialidade = especialidade;
 		//this.idEspecialidade = idEspecialidade;
 	}
 	
 	public Pesquisador(Usuario _usuario) {
-		super(_usuario.id, _usuario.nome, _usuario.login, _usuario.senha, _usuario.tel, _usuario.email, _usuario.dataCadastro, _usuario.tipoUsuario);
+		super(_usuario.id, _usuario.nome, _usuario.login, _usuario.senha, _usuario.tel, _usuario.email, _usuario.dataCadastro, _usuario.tipoUsuario, _usuario.status, _usuario.dataStatus);
 	}
 
 	public String getInstituto() {
