@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/template.xhtml">
+
+	<ui:define name="cabecalho">
+		<ui:include src="/includes/cabecalho.xhtml" />
+	</ui:define>
+	
+	<ui:define name="menu">
+	    <ui:include src="/includes/menu.xhtml" />
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<h:form id="f">
+		    
+		    <p:dataTable id="tblDesafios" emptyMessage="No records found." 
+		    		var="desafio" value="#{desafioBean.desafios}" 
+		    		paginator="true" rows="12" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+		    		sortMode="multiple" >
+			    
+			    <f:facet name="header">List of challenges</f:facet>
+			    
+			    <p:column headerText="Id" width="20">
+			        <p:outputLabel value="#{desafio.id}" rendered="#{desafio.status.id != 1}" />
+			        	
+			        <p:outputLabel value="#{desafio.id}" 
+			        	rendered="#{desafio.status.id == 1}" styleClass="fontListaDesafiosValidados" />
+			    </p:column>
+			 
+			    <p:column headerText="Title" width="auto" sortBy="#{desafio.titulo}">
+			        <p:outputLabel value="#{desafio.titulo}" rendered="#{desafio.status.id != 1}" />
+			        
+			        <p:outputLabel value="#{desafio.titulo}"
+			        	rendered="#{desafio.status.id == 1}" styleClass="fontListaDesafiosValidados" />
+			    </p:column>
+				 
+			    <p:column headerText="Status" width="65" style="text-align: center;" sortBy="#{desafio.status.nome}">
+			        <p:outputLabel value="#{desafio.status.nome}" rendered="#{desafio.status.id != 1}" />
+			        
+			        <p:outputLabel value="#{desafio.status.nome}"
+			        	rendered="#{desafio.status.id == 1}" styleClass="fontListaDesafiosValidados" />
+			    </p:column>
+	
+	   		    <p:column headerText="Project (Network Type)" width="auto" style="text-align: center;" sortBy="#{desafio.especialidade.nome}">
+			        <p:outputLabel value="#{desafio.especialidade.nome}" rendered="#{desafio.status.id != 1}" />
+			        
+			        <p:outputLabel value="#{desafio.especialidade.nome}"
+			        	rendered="#{desafio.status.id == 1}" styleClass="fontListaDesafiosValidados" />
+			    </p:column>
+			    
+			    <p:column headerText="Owner" width="120" sortBy="#{desafio.usuario.nome}">
+			        <p:outputLabel value="#{desafio.usuario.nome}" rendered="#{desafio.status.id != 1}" />
+			        
+			        <p:outputLabel value="#{desafio.usuario.nome}"
+			        	rendered="#{desafio.status.id == 1}" styleClass="fontListaDesafiosValidados" />
+			    </p:column>
+			    
+			    <p:column headerText="Answers" width="45" style="text-align: center;" >
+			        <p:outputLabel  value="#{desafio.respostas.size()}" rendered="#{desafio.status.id != 1}" />
+			        
+			        <p:outputLabel  value="#{desafio.respostas.size()}"
+			        	rendered="#{desafio.status.id == 1}" styleClass="fontListaDesafiosValidados" />
+			    </p:column>
+	
+			    <p:column headerText="Actions" width="90">
+			        
+			        <p:commandButton icon="ui-icon-trash" actionListener="#{desafioBean.PrepararExcluir}" 
+			    		oncomplete="PF('dlgExcluirDesafio').show();" 
+			    		update="dlgEx"/>
+
+			    	<p:commandButton icon="ui-icon-pencil" actionListener="#{desafioBean.PrepararEditar}" 
+			    		oncomplete="PF('dlgEditarDesafio').show();" 
+			    		update="dlgEd" />
+
+					<p:commandButton icon="ui-icon-search" actionListener="#{desafioBean.PrepararVerInformcoes}" 
+			    		oncomplete="PF('desafioDialog').show();" 
+			    		update="fDetails:pgDetails fDetails:ltDetails"/>
+			    	
+			    </p:column>
+			    
+			    <f:facet name="footer">
+			    	<p:commandButton value="New" actionListener="#{desafioBean.PrepararNovo}" 
+			    	oncomplete="PF('dlgNovoDesafio').show();"
+			    	update=":fCadastrar:pgCadastrar " />
+			    </f:facet>
+			</p:dataTable>
+		
+		</h:form>	
+		
+		<p:dialog header="Challenge Information" widgetVar="desafioDialog" modal="true" appendTo="@(body)"
+				draggable="false" resizable="false" width="700" height="550" position="center">
+		        
+		   	<h:form id="fDetails">
+
+		             <p:fieldset style="float:left; width:95%; height: auto;">
+				
+						<p:scrollPanel mode="native" colums="1" styleClass="painelDosComentarios" >
+						    
+						    <h:panelGrid id="pgDetails" columns="2">
+		             	
+			               		<p:outputLabel value="Id:" />
+			               		<p:outputLabel styleClass="letraNegrito" value="#{desafioBean.desafio.id}" />
+			
+			               		<p:outputLabel value="Title:" />
+			               		<p:outputLabel styleClass="letraNegrito" value="#{desafioBean.desafio.titulo}" />
+			
+			               		<p:outputLabel value="Description:" />
+			               		<p:outputLabel styleClass="textoDesafio" value="#{desafioBean.desafio.desc}" />
+			
+			               		<p:outputLabel value="Status:" />
+			               		<p:outputLabel styleClass="letraNegrito" value="#{desafioBean.desafio.status.nome}" />
+			
+			               		<p:outputLabel value="Project (Network Type):" />
+			               		<p:outputLabel styleClass="letraNegrito" value="#{desafioBean.desafio.especialidade.nome}" />
+						 		
+						 		<p:outputLabel value="Owner:" />
+						 		<p:outputLabel styleClass="letraNegrito" value="#{desafioBean.desafio.usuario.nome}" />
+			
+								<p:outputLabel value="Response ID Accepted:" />
+								<p:outputLabel styleClass="letraNegrito" value="#{desafioBean.desafio.idRespostaAceita}" />
+		
+				            </h:panelGrid>
+				            
+				            <p:dataList id="ltDetails" value="#{desafioBean.desafio.respostas}" var="resposta" type="ordered" itemType="none" 
+		                    		paginator="true" rows="10" styleClass="paginated" >
+		
+						        <h:outputText value="#{resposta.id} / #{resposta.titulo} / #{resposta.pesquisador.nome}" style="display:inline-block" />
+						    </p:dataList>
+		
+						</p:scrollPanel>
+						
+					</p:fieldset>
+		            
+		            <p:fieldset style="width:auto; height: 20px; border: none;">
+		            	<p:commandButton id="btnFechar" value="Close" onclick="PF('desafioDialog').hide();" />
+		            </p:fieldset>
+
+		        </h:form>
+		        
+		    </p:dialog>
+		
+		<p:dialog header="New challenge" widgetVar="dlgNovoDesafio" width="500" height="500"
+					modal="true" appendTo="@(body)"
+				  	draggable="false" resizable="false" closable="false" >
+		    
+		    <h:form id="fCadastrar">
+		    	<h:panelGrid id="pgCadastrar" columns="2">
+		    	
+			    	<p:outputLabel value="Auto ID:"/>
+					<p:outputLabel value="#{desafioBean.desafio.id}"/>
+					
+					<p:outputLabel value="Enter Title:"/>
+					<p:inputText id="nome" value="#{desafioBean.desafio.titulo}" style="width:345px" />
+					
+					<p:outputLabel value="Select Project (Network Type):" />
+					<p:selectOneMenu id="especialidade" value="#{desafioBean.desafio.especialidade}" required="true" converter="especialidadeConverter" style="width:328px" >
+			            <p:ajax listener="#{desafioBean.FiltrarPesquisadores}" update="usuario" />
+			            <f:selectItem itemLabel="Select" itemValue="" />
+          				<f:selectItems value="#{desafioBean.especialidades}" var="esp" itemLabel="#{esp.nome}" itemValue="#{esp}" />
+			        </p:selectOneMenu>
+			        
+			        <p:outputLabel value="Select the Owner:" />
+					<p:selectOneMenu id="usuario" value="#{desafioBean.desafio.usuario}" required="true" style="width:328px" converter="usuarioConverter">
+			            <f:selectItem itemLabel="Select" itemValue="" />
+          				<f:selectItems value="#{desafioBean.listaPesquisadores}" var="pesquisador" itemLabel="#{pesquisador.nome}" itemValue="#{pesquisador}" />
+			        </p:selectOneMenu>
+			        
+			        <p:outputLabel value="Enter Description:"/>
+			        <p:scrollPanel mode="native" colums="1" styleClass="painelDaDescricao" >
+						<p:inputTextarea id="desc" value="#{desafioBean.desafio.desc}" rows="20" cols="45" />
+					</p:scrollPanel>
+					
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+				
+					<p:commandButton value="Register" oncomplete="PF('dlgNovoDesafio').hide();" 
+						actionListener="#{desafioBean.CadastrarDesafio}" 
+						update=":f:tblDesafios :msgGlobal"/>
+				
+					<p:commandButton value="Cancel" onclick="PF('dlgNovoDesafio').hide();" />
+				
+				</h:panelGrid>
+		    </h:form>
+		</p:dialog>
+		
+		<p:dialog id="dlgEd" header="Edit Challenge" widgetVar="dlgEditarDesafio" width="500" height="500"
+					modal="true" appendTo="@(body)"
+				  	draggable="false" resizable="false" closable="false" >
+		    
+		    <h:form id="fEditar">
+		    	
+		    	<h:panelGrid id="pgEditar" columns="2">
+		    	
+			    	<p:outputLabel value="Auto ID:"/>
+					<p:outputLabel value="#{desafioBean.desafio.id}"/>
+					
+					<p:outputLabel value="Enter Title:"/>
+					<p:inputText id="nome" value="#{desafioBean.desafio.titulo}" style="width:345px" />
+					
+					<p:outputLabel value="Select Project (Network Type):" />
+					<p:selectOneMenu id="especialidade" value="#{desafioBean.desafio.especialidade}" required="true" converter="especialidadeConverter" style="width:328px" >
+			            <p:ajax listener="#{desafioBean.FiltrarPesquisadores}" update="usuario" />
+			            <f:selectItem itemLabel="Select" itemValue="" />
+          				<f:selectItems value="#{desafioBean.especialidades}" var="esp" itemLabel="#{esp.nome}" itemValue="#{esp}" />
+			        </p:selectOneMenu>
+			        
+			        <p:outputLabel value="Select the Owner:" />
+					<p:selectOneMenu id="usuario" value="#{desafioBean.desafio.usuario}" style="width:328px" converter="usuarioConverter">
+			            <f:selectItem itemLabel="#{desafioBean.desafio.usuario.nome}" itemValue="#{desafioBean.desafio.usuario}" />
+          				<f:selectItems value="#{desafioBean.listaPesquisadores}" var="pesquisador" itemLabel="#{pesquisador.nome}" itemValue="#{pesquisador}" />
+			        </p:selectOneMenu>
+			        
+			        
+			        <p:outputLabel value="Enter Description:"/>
+			        <p:scrollPanel mode="native" colums="1" styleClass="painelDaDescricao" >
+						<p:inputTextarea id="desc" value="#{desafioBean.desafio.desc}" rows="20" cols="45" />
+					</p:scrollPanel>
+					
+				</h:panelGrid>
+					
+				<h:panelGrid columns="2">
+				
+					<p:commandButton value="Register" oncomplete="PF('dlgEditarDesafio').hide();" 
+						actionListener="#{desafioBean.EditarDesafio}" 
+						update=":f:tblDesafios :msgGlobal"/>
+				
+					<p:commandButton value="Cancel" onclick="PF('dlgEditarDesafio').hide();" />
+				
+				</h:panelGrid>
+		    </h:form>
+		</p:dialog>
+		
+		<p:dialog id="dlgEx" header="Delete Challenge" widgetVar="dlgExcluirDesafio"
+					modal="true" appendTo="@(body)"
+				  	draggable="false" resizable="false" closable="false" >
+		    
+		    <h:form id="fExcluir">
+		    	
+		    	<h:panelGrid id="pgExcluir" columns="2">
+			    	<p:outputLabel value="ID:"/>
+					<p:outputLabel value="#{desafioBean.desafio.id}" styleClass="letraNegrito" />
+					
+					<p:outputLabel value="Title:"/>
+					<p:outputLabel id="nome" value="#{desafioBean.desafio.titulo}" styleClass="letraNegrito" />
+				</h:panelGrid>
+				
+				<h:panelGrid rendered="#{desafioBean.desafio.respostas.size() > 0 ? true : false}" columns="1" style="font-weight: bold; color: red; padding: 10px">
+			    	<p:outputLabel value="There are #{desafioBean.desafio.respostas.size()} Answer(s) link(s) to this Challenge!"/>
+			    	<p:outputLabel value="Do you want to delete it anyway ???"/>
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+					<p:commandButton value="Delete" oncomplete="PF('dlgExcluirDesafio').hide();" 
+							actionListener="#{desafioBean.ExcluirDesafio}" 
+							update=":f:tblDesafios :msgGlobal" />
+					
+					<p:commandButton value="Cancel" onclick="PF('dlgExcluirDesafio').hide();" />
+				</h:panelGrid>
+				
+		    </h:form>
+		    
+		</p:dialog>
+		    
+	</ui:define>
+	
+	<ui:define name="rodape">
+	    <ui:include src="/includes/rodape.xhtml" />
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,559 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	template="/templates/template.xhtml">
+
+	<ui:define name="cabecalho">
+		<ui:include src="/includes/cabecalho.xhtml" />
+	</ui:define>
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menu.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+	
+		<h:form id="f">
+			
+			<p:fieldset legend="Challenges in your projects" style="float:left; width:20%; height: 485px;">
+				
+				<p:scrollPanel id="desafiosCadastrados" columns="1" 
+					style="margin-bottom: 10px; width: 100%; height: 100%; border: none;">
+					
+					<p:selectOneListbox id="listaDesafios" value="#{resolucaoDesafiosBean.desafio}"
+						converter="desafioConverter" var="t" filter="true" scrollHeight="414"
+						filterMatchMode="contains" style="width: 95%; height: 435px;" >
+						
+						<p:ajax listener="#{resolucaoDesafiosBean.CarregarRespostasDoDesafioSelecionado}" 
+							update="tblRespostas descDesafio fDetails:pgDetails respostaDialog" />
+						
+						<f:selectItems value="#{resolucaoDesafiosBean.listaDesafios}" var="desafio"		
+							itemLabel="#{desafio.titulo}" itemValue="#{desafio}" />
+						
+						<p:column>
+							<p:outputLabel value="#{t.titulo}" styleClass="fontListaDesafios" 
+								rendered="#{t.status.id != 1}" />
+								
+							<p:outputLabel value="#{t.titulo}" styleClass="fontListaDesafiosValidados" 
+								rendered="#{t.status.id == 1}" />
+						</p:column>
+						
+						<p:column>
+							<p:outputLabel value="#{t.respostas.size() > 0 ? '+' : ''}" styleClass="fontListaDesafios" 
+								rendered="#{doc.status.id != 1}" />
+							<p:outputLabel value="#{t.respostas.size() > 0 ? '+' : ''}" styleClass="fontListaDesafiosValidados" 
+								rendered="#{doc.status.id == 1}" />
+						</p:column>
+						
+					</p:selectOneListbox>
+					
+				</p:scrollPanel>
+				
+			</p:fieldset>
+			
+			<p:fieldset legend="Description of the challenge" style="width:70%; height: 240px;">
+				
+				<p:panelGrid id="descDesafio" style="margin-top:05px; width:100%; height: auto;">
+				    <f:facet name="header">
+				        <p:row>
+				            <p:column>
+				            	<p:outputLabel value="#{resolucaoDesafiosBean.desafio.titulo}" />
+				            	&nbsp;
+				            	<p:commandButton icon="ui-icon-search" disabled="#{!resolucaoDesafiosBean.desafioSelecionado}" oncomplete="PF('desafioDialog').show();" />
+				            </p:column>
+				        </p:row>
+				    </f:facet>
+				 
+				    <p:row>
+				        <p:column>
+				        	<h:inputTextarea rendered="#{resolucaoDesafiosBean.desafioSelecionado}" autoResize="true" readonly="true" class="textoDesafio" 
+				        		value="#{resolucaoDesafiosBean.desafio.desc}" />
+				        		
+				        		<h:panelGrid rendered="#{!resolucaoDesafiosBean.desafioSelecionado}" styleClass="nenhumaDesafioSelecionada" >
+							 			<p:outputLabel value="No challenge selected!!!" />
+							 	</h:panelGrid>
+							 	
+				        </p:column>
+				    </p:row>
+				 
+				    <f:facet name="footer">
+				        
+				        <p:row>
+				            <p:column  colspan="4" style="text-align: center">
+				                <p:commandButton value="Reply challenge" disabled="#{!resolucaoDesafiosBean.desafioSelecionado}" actionListener="#{resolucaoDesafiosBean.PrepararNovaResposta}" 
+							    	oncomplete="PF('dlgNovaResposta').show();"
+							    	update=":fResposta:wiz" />
+				            </p:column>
+				        </p:row>
+				 
+				    </f:facet>
+				    
+				</p:panelGrid>
+			 		
+			</p:fieldset>
+			
+			<br />
+			
+			<p:fieldset id="qRespostas" legend="Answer frame" style="width:70%; height:210px;">
+				
+				<h:panelGrid id="pRespostas" columns="1" style="margin-top:-8px; width:100%; height:auto;">
+					
+					<p:dataTable id="tblRespostas" emptyMessage="No records found." 
+			    		var="resposta" value="#{resolucaoDesafiosBean.respostas}" 
+			    		paginator="true" rows="4" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+			    		style="width:100%; height: 100%;" >
+				    
+					    <f:facet name="header">Selected Challenge Response List</f:facet>
+					    
+					    <p:column headerText="Id" width="4%">
+					        <p:outputLabel value="#{resposta.id}" />
+					    </p:column>
+					 
+					    <p:column headerText="Title" width="auto" >
+					    
+							<!-- <p:outputLabel value="#{resposta.titulo}" title="#{resposta.desc}"/> -->
+					        
+							<p:commandLink value="#{resposta.titulo}" title="Description: #{resposta.desc}"
+								actionListener="#{resolucaoDesafiosBean.PrepararAbrirComentarios}"
+								oncomplete="PF('dlgDescResposta').show();" update=":dDescResposta"
+								styleClass="linkResposta" />
+					        
+					        <p:commandButton icon="ui-icon-comment" style="float: right;"
+					        	title="Answer Comments!" actionListener="#{resolucaoDesafiosBean.PrepararAbrirComentarios}"
+					        	oncomplete="PF('dlgComentarios').show();" update=":dComentarios :fComentarios:comentarios"/>
+					    
+					    </p:column>
+					    
+					    <p:column headerText="Researcher" width="22%" style="text-align: center;" >
+					        <p:outputLabel value="#{resposta.pesquisador.nome}" />
+					    </p:column>
+					    
+					    <p:column headerText="*" width="11%" >
+					    
+						    <p:commandButton icon="ui-icon-trash" actionListener="#{resolucaoDesafiosBean.PrepararExcluirResposta}"
+						    	oncomplete="PF('dlgExcluirResposta').show();"
+						    	update=":dExcluirResposta"
+						    	rendered="#{USUARIOLogado.id != resposta.pesquisador.id ? false : true}"
+						    	disabled="#{USUARIOLogado.id == resposta.pesquisador.id ? false : true}"/>
+						    	
+						    <p:commandButton icon="ui-icon-pencil" actionListener="#{resolucaoDesafiosBean.PrepararAtualizarResposta}"
+						    	oncomplete="PF('dlgEditarResposta').show();"
+						    	update=":dEditarResposta"
+						    	rendered="#{USUARIOLogado.id != resposta.pesquisador.id ? false : true}"
+						    	disabled="#{USUARIOLogado.id == resposta.pesquisador.id ? false : true}"/>
+					    	
+					    </p:column>
+					    
+					</p:dataTable>
+					
+				</h:panelGrid>
+				
+			</p:fieldset>
+					    
+		</h:form>
+		
+		<p:dialog id="desDialog" header="Challenge Information" widgetVar="desafioDialog" modal="true" appendTo="@(body)"
+				draggable="true" resizable="false" width="700" height="550" position="center" >
+		        
+		   		<h:form id="fDetails">
+
+		            <p:fieldset style="float:left; width:95%; height: auto;">
+				
+						<p:scrollPanel mode="native" colums="1" styleClass="painelDosComentarios" >
+						    
+						    <h:panelGrid id="pgDetails" columns="2">
+		             	
+			               		<p:outputLabel value="Id:" />
+			               		<p:outputLabel styleClass="letraNegrito" value="#{resolucaoDesafiosBean.desafio.id}" />
+			
+			               		<p:outputLabel value="Title:" />
+			               		<p:outputLabel styleClass="letraNegrito" value="#{resolucaoDesafiosBean.desafio.titulo}" />
+			
+			               		<p:outputLabel value="Description:" />
+			               		<p:outputLabel styleClass="textoDesafio" value="#{resolucaoDesafiosBean.desafio.desc}" />
+			
+			               		<p:outputLabel value="Status:" />
+			               		<p:outputLabel styleClass="letraNegrito" value="#{resolucaoDesafiosBean.desafio.status.nome}" />
+			
+			               		<p:outputLabel value="Project (Network Type):" />
+			               		<p:outputLabel styleClass="letraNegrito" value="#{resolucaoDesafiosBean.desafio.especialidade.nome}" />
+						 		
+						 		<p:outputLabel value="Owner:" />
+						 		<p:outputLabel styleClass="letraNegrito" value="#{resolucaoDesafiosBean.desafio.usuario.nome}" />
+			
+								<p:outputLabel value="Response ID Accepted:" />
+								<p:outputLabel styleClass="letraNegrito" value="#{resolucaoDesafiosBean.desafio.idRespostaAceita}" />
+		
+				            </h:panelGrid>
+		
+						</p:scrollPanel>
+						
+					</p:fieldset>
+		            
+		            <p:fieldset style="width:auto; height: 20px; border: none;">
+		            	<p:commandButton id="btnFechar" value="Close" onclick="PF('desafioDialog').hide();" />
+		            </p:fieldset>
+		            
+		        </h:form>
+		        
+		</p:dialog>
+		
+		<p:dialog id="respostaDialog" header="Answer to: #{resolucaoDesafiosBean.desafio.titulo}" widgetVar="dlgNovaResposta" modal="true" 
+			appendTo="@(body)"
+			draggable="false" resizable="false" position="center" width="720" height="380" >
+		        
+		   		<h:form id="fResposta">
+
+		             	<p:wizard id="wiz" widgetVar="wiz" flowListener="#{resolucaoDesafiosBean.onProcessoFluxo}" 
+		             		backLabel="Previous" nextLabel="Next" 
+		             	 	showNavBar="true" >
+					        
+					        <p:tab id="detalhe" title="Details">
+					            <p:panel header="Response Details">
+					                <p:messages />
+					                <h:panelGrid columns="2" columnClasses="label, value">
+					                    
+					                    <p:outputLabel value="Title" />
+					                    
+					                    <p:inputText value="#{resolucaoDesafiosBean.novaResposta.titulo}" 
+					                    	required="true" requiredMessage="The title of the answer is required!"
+					                    	maxlength="250" styleClass="tituloResposta" />
+					                        
+					                 	<p:outputLabel value="Answer " />
+					                 	
+					                 	<p:inputTextarea autoResize="false" class="textoResposta"
+					                 		required="true" requiredMessage="The description of the answer is required!"
+				        					value="#{resolucaoDesafiosBean.novaResposta.desc}" style="width:550px;" />
+					                    
+					                </h:panelGrid>
+					            </p:panel>
+					        </p:tab>
+					 
+					        <p:tab id="confirm" title="Confirmation">
+					            <p:panel header="Confirmation">
+					                <h:panelGrid id="confirmation" columns="3" columnClasses="grid,grid,grid">
+					                    <h:panelGrid columns="2" columnClasses="label, value">
+					                        
+					                        <p:outputLabel value="Title " />
+						                    <p:outputLabel value="#{resolucaoDesafiosBean.novaResposta.titulo}" 
+						                    	styleClass="tituloResposta" />
+						                        
+						                 	<p:outputLabel value="Answer " />
+						                 	<h:inputTextarea autoResize="false" disabled="true" class="textoResposta" 
+					        					value="#{resolucaoDesafiosBean.novaResposta.desc}" style="width:550px;" />
+					                        
+					                    </h:panelGrid>
+					 
+					                    <h:panelGrid columns="2" columnClasses="label, value">
+					                        
+					                    </h:panelGrid>
+					 
+					                    <h:panelGrid columns="2" columnClasses="label, value">
+					                        
+					                    </h:panelGrid>
+					                    
+					                </h:panelGrid>
+					 
+					                <p:commandButton value="Register" actionListener="#{resolucaoDesafiosBean.CadastrarResposta}" 
+					                	style="float: right;" update=":f:listaDesafios :f:tblRespostas :msgGlobal :respostaDialog" process="@this" oncomplete="PF('dlgNovaResposta').hide();"/>
+					            </p:panel>
+					        </p:tab>
+					    </p:wizard>
+		            
+		        </h:form>
+		        
+		</p:dialog>
+		
+		<p:dialog id="dDescResposta" header="Details Answer" widgetVar="dlgDescResposta" height="auto"
+					modal="true" appendTo="@(body)"
+				  	draggable="false" resizable="false" closable="false" >
+		    
+		    <h:form id="fDesc">
+		    	
+		    	<h:panelGrid id="pgDesc" columns="2">
+			    	<p:outputLabel value="ID:"/>
+					<p:outputLabel value="#{resolucaoDesafiosBean.respostaSelecionada.id}" styleClass="letraNegrito"/>
+					
+					<p:outputLabel value="Title:"/>
+					<p:outputLabel id="nome" value="#{resolucaoDesafiosBean.respostaSelecionada.titulo}" styleClass="tituloResposta" />
+				
+              		<p:outputLabel value="Answer " />
+              		<p:inputTextarea autoResize="false" readonly="true" class="textoResposta" 
+    					value="#{resolucaoDesafiosBean.respostaSelecionada.desc}" style="width:400px;" />
+                    
+                </h:panelGrid>
+				
+				<h:panelGrid columns="2">
+					<p:commandButton value="Close" onclick="PF('dlgDescResposta').hide();" />
+				</h:panelGrid>
+				
+		    </h:form>
+		    
+		</p:dialog>
+		
+		<p:dialog id="dExcluirResposta" header="Delete Answer" widgetVar="dlgExcluirResposta" height="90"
+					modal="true" appendTo="@(body)"
+				  	draggable="false" resizable="false" closable="false" >
+		    
+		    <h:form id="fExcluir">
+		    	
+		    	<h:panelGrid id="pgExcluir" columns="2">
+			    	<p:outputLabel value="ID:"/>
+					<p:outputLabel value="#{resolucaoDesafiosBean.respostaSelecionada.id}" styleClass="letraNegrito" />
+					
+					<p:outputLabel value="Title:"/>
+					<p:outputLabel id="nome" value="#{resolucaoDesafiosBean.respostaSelecionada.titulo}" styleClass="letraNegrito" />
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir" oncomplete="PF('dlgExcluirResposta').hide();" 
+							actionListener="#{resolucaoDesafiosBean.ExcluirResposta}"
+							update=":f:listaDesafios :f:pRespostas :msgGlobal" />
+					
+					<p:commandButton value="Cancelar" onclick="PF('dlgExcluirResposta').hide();" />
+				</h:panelGrid>
+				
+		    </h:form>
+		    
+		</p:dialog>
+		
+		<p:dialog id="dEditarResposta" header="Edit Answer to: #{resolucaoDesafiosBean.desafio.titulo}" widgetVar="dlgEditarResposta" modal="true" 
+			appendTo="@(body)"
+			draggable="false" resizable="false" position="center" width="720" height="380" >
+		        
+		   		<h:form id="fEditar">
+
+		             	<p:wizard id="wiz" widgetVar="wiz" flowListener="#{resolucaoDesafiosBean.onProcessoFluxo}" 
+		             		backLabel="Previous" nextLabel="Next" 
+		             	 	showNavBar="true" >
+					        
+					        <p:tab id="detalhe" title="Details">
+					            <p:panel header="Response Details">
+					                <p:messages />
+					                <h:panelGrid columns="2" columnClasses="label, value">
+					                    <p:outputLabel value="Title" />
+					                    <p:inputText value="#{resolucaoDesafiosBean.respostaSelecionada.titulo}" 
+					                    	required="true" requiredMessage="The title of the answer is required!"
+					                    	maxlength="45" styleClass="tituloResposta"/>
+					                        
+					                 	<p:outputLabel value="Answer " />
+					                 	<p:inputTextarea autoResize="false" class="textoResposta" 
+					                 		required="true" requiredMessage="The description of the answer is required!"
+				        					value="#{resolucaoDesafiosBean.respostaSelecionada.desc}" style="width:550px;" />
+					                    
+					                </h:panelGrid>
+					            </p:panel>
+					        </p:tab>
+					 
+					        <p:tab id="confirm" title="Confirmation">
+					            
+					            <p:panel header="Confirmation">
+					               
+					                <h:panelGrid id="confirmation" columns="3" columnClasses="grid,grid,grid">
+					                    
+					                    <h:panelGrid columns="2" columnClasses="label, value">
+					                        
+					                        <p:outputLabel value="Title " />
+						                    <p:outputLabel value="#{resolucaoDesafiosBean.respostaSelecionada.titulo}" style="width:350px; font-weight: bold;" />
+						                        
+						                 	<p:outputLabel value="Answer " />
+						                 	<h:inputTextarea autoResize="false" disabled="true" class="textoDesafio" 
+					        					value="#{resolucaoDesafiosBean.respostaSelecionada.desc}" style="width:400px;" />
+					                        
+					                    </h:panelGrid>
+					 
+					                    <h:panelGrid columns="2" columnClasses="label, value">
+					                        
+					                    </h:panelGrid>
+					 
+					                    <h:panelGrid columns="2" columnClasses="label, value">
+					                        
+					                    </h:panelGrid>
+					                    
+					                </h:panelGrid>
+					 
+					                <p:commandButton value="Register" actionListener="#{resolucaoDesafiosBean.AtualizarResposta}" 
+					                	style="float: right;" update=":f:listaDesafios :f:tblRespostas :msgGlobal :respostaDialog" 
+					                	process="@this" oncomplete="PF('dlgEditarResposta').hide();"/>
+					            
+					            	<p:commandButton value="Cancelar" onclick="PF('dlgEditarResposta').hide();" />
+					            
+					            </p:panel>
+					        </p:tab>
+					    </p:wizard>
+		            
+		        </h:form>
+		        
+		</p:dialog>
+		
+		<p:dialog id="dComentarios" header="Comments panel from: #{resolucaoDesafiosBean.respostaSelecionada.titulo}" 
+			widgetVar="dlgComentarios" modal="true" appendTo="@(body)"
+			draggable="false" resizable="false" position="center" width="720" height="580px" >
+		        
+		   		<h:form id="fComentarios">
+		   			
+		   			<p:fieldset legend="Discussion list" style="float:left; width:95%; height: 485px;">
+				
+						<p:scrollPanel  id="comentarios" mode="native" colums="1" styleClass="painelDosComentarios" >
+						    
+						    <p:repeat value="#{resolucaoDesafiosBean.listaComentarios}" var="com">
+						        
+						        <h:panelGrid columns="3" style="width:100%" columnClasses="logo,detail">
+						        	
+						        	<p:outputPanel>
+						                
+						                <h:panelGrid columns="2" style="float: left;">
+						                
+						 					<h:graphicImage value="#{resource['imagens/user.png']}" height="23" width="20" />
+						 					<p:outputLabel value="#{com.pesquisador.nome}" />
+						 					
+						 				</h:panelGrid>
+						 				
+						 				<h:panelGrid columns="2" styleClass="botoesComentarios">
+						 					
+						 					<p:commandButton icon="ui-icon-trash"
+										    	oncomplete="PF('dlgExcluirComentario').show();"
+										    	update=":fExcluirComentario:pgExcluirComentario"
+										    	disabled="#{USUARIOLogado.id == com.pesquisador.id ? false : true}">
+										    	
+										    	<f:setPropertyActionListener value="#{com}" target="#{resolucaoDesafiosBean.comentario}" />
+										    </p:commandButton>
+										    
+										    <p:commandButton icon="ui-icon-pencil"
+										    	oncomplete="PF('dlgEditarComentario').show();"
+										    	update=":fEditarComentario:pgEditarComentario"
+										    	disabled="#{USUARIOLogado.id == com.pesquisador.id ? false : true}">
+										    	
+										    	<f:setPropertyActionListener value="#{com}" target="#{resolucaoDesafiosBean.comentario}" />
+										    </p:commandButton>
+										    
+						 				</h:panelGrid>
+						 				
+						 				<h:panelGrid columns="1" style="width:100%;">
+						                    <h:inputTextarea autoResize="true" readonly="true" class="textoComentario" 
+						        				value="#{com.texto}" />
+						                </h:panelGrid>
+						 					
+						 			</p:outputPanel>
+						            
+						        </h:panelGrid>
+						        
+						        <hr />
+						        
+						    </p:repeat>
+		
+						</p:scrollPanel>
+						
+					</p:fieldset>
+					
+					<p:fieldset id="btnNovoComentario" style="width:auto; height: 20px; border: none;">
+						
+						<p:commandButton value="New comment"
+							actionListener="#{resolucaoDesafiosBean.PrepararNovoComentario}"
+							oncomplete="PF('dlgNovoComentario').show();"
+							update=":fCadastrarComentario:pgCadastrarComentario" />
+							
+						<p:commandButton value="Close" style="float: right;"
+							oncomplete="PF('dlgComentarios').hide();" />
+							
+					</p:fieldset>
+		            
+		        </h:form>
+		        
+		</p:dialog>
+		
+		<!-- Janelas para Operações com Comentários -->
+		
+		<p:dialog id="dNcomentario" header="New comment" widgetVar="dlgNovoComentario" width="650"
+					modal="true" appendTo="@(body)"
+				  	draggable="false" resizable="false" closable="false" >
+		    
+		    <h:form id="fCadastrarComentario">
+		    	<h:panelGrid id="pgCadastrarComentario" styleClass="painelDadosComentario" columns="2" >
+		    	
+	    			<p:outputLabel value="ID auto:"/>
+	    			<h:outputText value="#{resolucaoDesafiosBean.comentario.id}" />
+		
+					<p:outputLabel value="Enter your comment"/>
+					<h:inputTextarea class="textoNovoComentario" value="#{resolucaoDesafiosBean.comentario.texto}" />
+						
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+				<p:commandButton value="Register" oncomplete="PF('dlgNovoComentario').hide();" 
+						actionListener="#{resolucaoDesafiosBean.CadastrarComentario}" 
+						update=":fComentarios:comentarios :msgGlobal" />
+				
+				<p:commandButton value="Cancel" onclick="PF('dlgNovoComentario').hide();" />
+
+				</h:panelGrid>
+		    </h:form>
+		</p:dialog>
+		
+		<p:dialog header="Delete comment" widgetVar="dlgExcluirComentario" height="90"
+					modal="true" appendTo="@(body)"
+				  	draggable="false" resizable="false" closable="false" >
+		    
+		    <h:form id="fExcluirComentario">
+		    	
+		    	<h:panelGrid id="pgExcluirComentario" columns="2">
+			    	<p:outputLabel value="ID:"/>
+					<p:outputLabel value="#{resolucaoDesafiosBean.comentario.id}" styleClass="letraNegrito" />
+					
+					<p:outputLabel value="Da Resposta:"/>
+					<p:outputLabel id="nome" value="#{resolucaoDesafiosBean.comentario.texto}" styleClass="letraNegrito" />
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+					<p:commandButton value="Delete" oncomplete="PF('dlgExcluirComentario').hide();" 
+							actionListener="#{resolucaoDesafiosBean.ExcluirComentario}"
+							update=":fComentarios:comentarios :msgGlobal" />
+					
+					<p:commandButton value="Cancel" onclick="PF('dlgExcluirComentario').hide();" />
+				</h:panelGrid>
+				
+		    </h:form>
+		    
+		</p:dialog>
+		
+		<p:dialog header="Edit comment" widgetVar="dlgEditarComentario" width="650"
+					modal="true" appendTo="@(body)"
+				  	draggable="false" resizable="false" closable="false" >
+		    
+		    <h:form id="fEditarComentario">
+		    	<h:panelGrid id="pgEditarComentario" styleClass="painelDadosComentario" columns="2">
+	   	
+	   				<p:outputLabel value="ID auto:"/>
+	    			<p:outputLabel value="#{resolucaoDesafiosBean.comentario.id}" styleClass="letraNegrito" />
+		
+					<p:outputLabel value="Enter your comment"/>
+					<h:inputTextarea class="textoNovoComentario" value="#{resolucaoDesafiosBean.comentario.texto}" />
+				
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+					<p:commandButton value="Register" oncomplete="PF('dlgEditarComentario').hide();" 
+						actionListener="#{resolucaoDesafiosBean.EditarComentario}" 
+						update=":fComentarios:comentarios :msgGlobal" />
+				
+					<p:commandButton value="Cancel" onclick="PF('dlgEditarComentario').hide();" />
+
+				</h:panelGrid>
+			    
+		    </h:form>
+		</p:dialog>
+		
+	</ui:define>
+
+	<ui:define name="rodape">
+	    <ui:include src="/includes/rodape.xhtml" />
+	</ui:define>
+
+</ui:composition>

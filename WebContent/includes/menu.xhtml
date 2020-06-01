@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+	<h:form>
+		<p:menu style="width:auto">
+
+			<p:submenu label="Management" expanded="false">
+					
+				<p:menuitem value="Register researchers" icon="ui-icon-person"
+					onclick="window.location.href='/CurSystem/cadastro/cad_pesquisadores.jsf'" />
+				
+				<p:menuitem value="Throw challenges" icon="ui-icon-help"
+					onclick="window.location.href='/CurSystem/cadastro/cad_desafios.jsf'" />
+					
+				<p:menuitem value="Challenge discussions" icon="ui-icon-lightbulb"
+					onclick="window.location.href='/CurSystem/analise/challenges_discussions.jsf'" />
+				
+				<p:menuitem value="Close challenges" icon="ui-icon-check"
+					onclick="window.location.href='/CurSystem/analise/close_challenges.jsf'" />
+					
+			</p:submenu>
+			
+		</p:menu>
+		
+	</h:form>
+</ui:composition>

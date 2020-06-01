@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	template="/templates/template.xhtml">
+
+	<ui:define name="cabecalho">
+		<ui:include src="/includes/cabecalho.xhtml" />
+	</ui:define>
+	
+	<ui:define name="menu">
+	    <ui:include src="/includes/menu.xhtml" />
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		
+		<h:form id="f">
+			
+			<p:fieldset legend="Your challenges" style="float:left; width:50px; height: 485px;">
+				
+				<p:scrollPanel id="respostas" mode="native" columns="1" styleClass="painelDaArvore">
+					
+					<p:tree id="arvore" value="#{analiseRespostaBean.raiz}" var="doc" styleClass="arvoreRespostas"
+		                selectionMode="single" selection="#{analiseRespostaBean.noSelecionado}" dynamic="true">
+		                
+				        <p:ajax event="select" update=":f:menuContextVal :f:painelDetalhes" />
+				        <p:ajax event="unselect" />
+				        
+				        <p:treeNode type="desafio" expandedIcon="ui-icon-help" collapsedIcon="ui-icon-help">
+				            
+				            <p:outputLabel value="#{doc.titulo}" styleClass="fontListaDesafios" 
+				            	rendered="#{doc.status.id != 1}" />    
+				        	
+				        	<p:outputLabel value="#{doc.titulo}" styleClass="fontListaDesafiosValidados" 
+				        		rendered="#{doc.status.id == 1}" />
+				        	
+				        </p:treeNode>
+				        
+				        <p:treeNode type="resposta" icon="ui-icon-lightbulb" >  
+				            
+				            <p:outputLabel value="#{doc.titulo}" styleClass="fontListaRespostas" />
+				            
+				            <h:graphicImage rendered="#{doc.status}" styleClass="iconeValidacao"
+				            	value="#{resource['imagens/iconValidation.png']}" height="10" width="13" />
+				        
+				        </p:treeNode>
+			        	
+		    		</p:tree>
+					
+				</p:scrollPanel>
+				
+			</p:fieldset>
+			
+			<p:fieldset id="painelDetalhes" legend="Validation justification" style="float:left; width:53%; height: 485px;">
+				
+				<p:scrollPanel mode="native" colums="1" styleClass="painelDosComentarios" >
+				        
+			        <h:panelGrid rendered="#{analiseRespostaBean.temRespostaSelecionada}" columns="3" style="width:100%" columnClasses="logo,detail">
+			        	
+			        	<p:outputPanel>
+			                
+			                <h:panelGrid columns="2" style="float: left;">
+			                
+			 					<h:graphicImage value="#{resource['imagens/user.png']}" height="23" width="20" />
+			 					<p:outputLabel value="#{analiseRespostaBean.resposta.pesquisador.nome}" />
+			 					
+			 				</h:panelGrid>
+			 				
+			 				<h:panelGrid columns="2" styleClass="botoesComentarios">
+			 					
+			 					<p:commandButton icon="ui-icon-comment" style="float: right;"
+					        		title="Opens comments panel!" 
+					        		actionListener="#{analiseRespostaBean.CarregarComentariosDaResposta}"
+					        		oncomplete="PF('dlgComentarios').show();" 
+					        		update=":dComentarios :fComentarios:comentarios" />
+					    	
+							    <p:commandButton id="btnExcluirResposta" icon="ui-icon-trash" 
+							    	disabled="#{analiseRespostaBean.resposta.status}"
+							    	title="Delete Answer"
+								    oncomplete="PF('dlgExcluirResposta').show();"
+								    update=":fExcluir:pgExcluir" />
+							    
+			 				</h:panelGrid>
+			 				
+			 				<h:panelGrid columns="1" style="width:100%;">
+			                    <h:inputTextarea autoResize="true" readonly="true" styleClass="textoResposta" value="#{analiseRespostaBean.resposta.desc}" />
+			                </h:panelGrid>
+			 					
+			 			</p:outputPanel>
+			 		</h:panelGrid>
+			 		
+			 		<h:panelGrid rendered="#{!analiseRespostaBean.temRespostaSelecionada}" styleClass="nenhumaRespostaSelecionada" >
+			 			<p:outputLabel value="No answer selected!!!" />
+			 		</h:panelGrid>
+			        
+			        
+			        <h:panelGrid id="justificativa" rendered="#{analiseRespostaBean.temRespostaSelecionada}" columns="3" style="width:100%" columnClasses="logo,detail">
+			        	
+			        	<p:outputPanel rendered="#{analiseRespostaBean.resposta.status}">
+			                
+			                <h:panelGrid columns="2" style="float: left;">
+			                
+			                	<h:graphicImage value="#{resource['imagens/iconValidation.png']}" height="15" width="15" />
+			 					<p:outputLabel value="Justification of validation" style="font-weight: bold; font-size: 15pt;" />
+			 					
+			 				</h:panelGrid>
+			 				
+			 				<h:panelGrid columns="2" styleClass="botoesComentarios">
+			 					
+							    <p:commandButton icon="ui-icon-pencil"
+							    	oncomplete="PF('dlgEditarJustificativa').show();"
+							    	update=":fEditar:pgEditar" />
+							    	
+							    <p:commandButton icon="ui-icon-closethick"
+							    	title="Delete justification and Cancel validation!"
+							    	oncomplete="PF('dlgCancelarValidacao').show();"
+							    	update=":fCancelar:pgCancelar" />
+							    
+			 				</h:panelGrid>
+			 				
+			 				<h:panelGrid columns="1" style="width:100%;">
+			                    <h:inputTextarea autoResize="true" readonly="true" styleClass="textoJustificativa" 
+			                    value="#{analiseRespostaBean.resposta.justificativa}" />
+			                </h:panelGrid>
+			 					
+			 			</p:outputPanel>
+			            
+			        </h:panelGrid>
+			        
+			        <h:panelGrid id="btnValidar" rendered="#{!analiseRespostaBean.resposta.status}" style="width:auto; float: right" >
+							<p:outputPanel>	
+								
+								<p:commandButton value="Validate Answer"  style="height: 25px;"
+									disabled="#{!analiseRespostaBean.temRespostaSelecionada}"
+									rendered="#{analiseRespostaBean.temRespostaSelecionada}"
+									oncomplete="PF('dlgInserirJustificativa').show();" />
+							
+							</p:outputPanel>
+					</h:panelGrid>
+
+				</p:scrollPanel>
+				
+			</p:fieldset>
+							
+			<p:contextMenu id="menuContextVal" for="arvore">
+		        
+		        <p:menuitem value="Validate answer" disabled="#{!analiseRespostaBean.temRespostaSelecionada}" 
+		        	icon="ui-icon-check" oncomplete="PF('dlgInserirJustificativa').show();"
+		        	update=":f:respostas :f:btnExcluirResposta :f:painelDetalhes :msgGlobal" />
+		        
+		        <p:menuitem value="Cancel validation" disabled="#{!analiseRespostaBean.temRespostaSelecionada}" 
+		        	icon="ui-icon-closethick" oncomplete="PF('dlgCancelarValidacao').show();" />
+		        
+		    </p:contextMenu>
+			
+		</h:form>
+					
+		<p:dialog header="Justification for answer validation" widgetVar="dlgInserirJustificativa" width="500"
+					modal="true" appendTo="@(body)"
+				  	draggable="false" resizable="false" closable="false" >
+		    
+		    <h:form id="fJustificativa">
+		    	<h:panelGrid id="pgJustificativa" columns="1" style="width:100%; height: auto;" >
+					<h:inputTextarea class="textoJustificativa" value="#{analiseRespostaBean.resposta.justificativa}" />
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+				<p:commandButton value="Register" oncomplete="PF('dlgInserirJustificativa').hide();" 
+						actionListener="#{analiseRespostaBean.ValidarResposta}" 
+						update=":f:respostas :f:btnExcluirResposta :f:painelDetalhes :msgGlobal" />
+				
+				<p:commandButton value="Cancel" onclick="PF('dlgInserirJustificativa').hide();" />
+
+				</h:panelGrid>
+				
+		    </h:form>
+		    
+		</p:dialog>
+		
+		<p:dialog header="Edit justification for answer validation" widgetVar="dlgEditarJustificativa" width="500"
+					modal="true" appendTo="@(body)"
+				  	draggable="false" resizable="false" closable="false" >
+		    
+		    <h:form id="fEditar">
+		    	<h:panelGrid id="pgEditar" columns="1" style="width:100%; height: auto;" >
+    				<h:inputTextarea class="textoJustificativa" value="#{analiseRespostaBean.resposta.justificativa}" />
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+					<p:commandButton value="Register" oncomplete="PF('dlgEditarJustificativa').hide();" 
+						actionListener="#{analiseRespostaBean.AtualizarJustificativa}" 
+						update=":f:justificativa :msgGlobal" />
+				
+					<p:commandButton value="Cancel" onclick="PF('dlgEditarJustificativa').hide();" />
+				</h:panelGrid>
+			    
+		    </h:form>
+		</p:dialog>
+		
+		<p:dialog header="Delete answer" widgetVar="dlgExcluirResposta" height="90"
+					modal="true" appendTo="@(body)"
+				  	draggable="false" resizable="false" closable="false" >
+		    
+		    <h:form id="fExcluir">
+		    	
+		    	<h:panelGrid id="pgExcluir" columns="2">
+			    	<p:outputLabel value="ID:"/>
+					<p:outputLabel value="#{analiseRespostaBean.resposta.id}" styleClass="letraNegrito" />
+					
+					<p:outputLabel value="Title of the answer:"/>
+					<p:outputLabel id="nome" value="#{analiseRespostaBean.resposta.titulo}" styleClass="letraNegrito" />
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+					<p:commandButton value="Delete" oncomplete="PF('dlgExcluirResposta').hide();" 
+							actionListener="#{analiseRespostaBean.ExcluirResposta}"
+							update=":f:respostas :f:painelDetalhes :msgGlobal" />
+					
+					<p:commandButton value="Cancel" onclick="PF('dlgExcluirResposta').hide();" />
+				</h:panelGrid>
+				
+		    </h:form>
+		    
+		</p:dialog>
+		
+		<p:dialog header="Cancel validation" widgetVar="dlgCancelarValidacao" height="90"
+					modal="true" appendTo="@(body)"
+				  	draggable="false" resizable="false" closable="false" >
+		    
+		    <h:form id="fCancelar">
+		    	
+		    	<h:panelGrid id="pgCancelar" columns="2">
+			    	<p:outputLabel value="ID:"/>
+					<p:outputLabel value="#{analiseRespostaBean.resposta.id}" styleClass="letraNegrito" />
+					
+					<p:outputLabel value="Title of the answer:"/>
+					<p:outputLabel id="nome" value="#{analiseRespostaBean.resposta.titulo}" styleClass="letraNegrito" />
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+					<p:commandButton value="Register" oncomplete="PF('dlgCancelarValidacao').hide();" 
+							actionListener="#{analiseRespostaBean.CancelarValidacao}"
+							update=":f:respostas :f:painelDetalhes :msgGlobal" />
+					
+					<p:commandButton value="Cancel" onclick="PF('dlgCancelarValidacao').hide();" />
+				</h:panelGrid>
+				
+		    </h:form>
+		    
+		</p:dialog>
+				
+		<p:dialog id="dComentarios" header="Comments panel from: #{analiseRespostaBean.resposta.titulo}" 
+			widgetVar="dlgComentarios" modal="true" appendTo="@(body)"
+			draggable="false" resizable="false" position="center" width="720" height="580px" >
+		        
+		   		<h:form id="fComentarios">
+		   			
+		   			<p:fieldset legend="Discussion list" style="float:left; width:95%; height: 485px;">
+				
+						<p:scrollPanel  id="comentarios" mode="native" colums="1" styleClass="painelDosComentarios" >
+						    
+						    <p:repeat value="#{analiseRespostaBean.listaComentarios}" var="com">
+						        
+						        <h:panelGrid columns="3" style="width:100%" columnClasses="logo,detail">
+						        	
+						        	<p:outputPanel>
+						                
+						                <h:panelGrid columns="2" style="float: left;">
+						                
+						 					<h:graphicImage value="#{resource['imagens/user.png']}" height="23" width="20" />
+						 					<p:outputLabel value="#{com.pesquisador.nome}" />
+						 					
+						 				</h:panelGrid>
+						 				
+						 				<h:panelGrid columns="1" style="width:100%;">
+						                    <h:inputTextarea autoResize="true" readonly="true" class="textoComentario" 
+						        				value="#{com.texto}" />
+						                </h:panelGrid>
+						 					
+						 			</p:outputPanel>
+						            
+						        </h:panelGrid>
+						        
+						        <hr />
+						        
+						    </p:repeat>
+		
+						</p:scrollPanel>
+						
+					</p:fieldset>
+					
+					<p:fieldset>
+												
+						<p:commandButton value="Close" style="float: right;"
+							oncomplete="PF('dlgComentarios').hide();" />
+							
+					</p:fieldset>
+		            
+		        </h:form>
+		        
+		</p:dialog>
+		
+	</ui:define>
+	
+	<ui:define name="rodape">
+	    <ui:include src="/includes/rodape.xhtml" />
+	</ui:define>
+
+</ui:composition>

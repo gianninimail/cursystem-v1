@@ -1,0 +1,28 @@
+<area alt="" title="" href="#" shape="poly" coords="169,90,167,334,381,336,380,256,342,254,343,183,360,163,360,91" />
+
+<area alt="" title="" href="#phospholipd_synthesis" shape="poly" coords="117,418,212,419,213,468,117,466" />
+<area alt="" title="" href="#amino_acido_catabolismo" shape="poly" coords="168,91,168,334,380,335,380,257,340,256,340,182,359,163,358,92" />
+<area alt="" title="" href="#fatty_acid_synthesis" shape="poly" coords="256,400,254,564,386,563,386,437,350,436,317,401" />
+<area alt="" title="" href="#sugar_catabolism" shape="poly" coords="345,184,346,251,390,251,389,228,448,170,446,136,396,134" />
+<area alt="" title="" href="#metabolism_central" shape="poly" coords="396,232,391,561,513,561,515,475,483,423,485,274,517,264,516,175,450,175" />
+<area alt="" title="" href="#amino_acido_synthesis" shape="poly" coords="522,231,522,267,490,278,490,422,519,473,520,609,696,610,694,231" />
+<area alt="" title="" href="#nitrogen_metabolism" shape="poly" coords="561,66,560,114,681,112,680,68" />
+<area alt="" title="" href="#energy_metabolism" shape="poly" coords="553,133,553,213,699,211,698,134" />
+<area alt="" title="" href="#energy_metabolism_ext" shape="poly" coords="552,132,553,212,701,212,699,192,743,193,743,144,699,143,697,132" />
+<area alt="" title="" href="#nucleotide_salvage_pathway" shape="poly" coords="748,76,748,218,912,217,911,76" />
+<area alt="" title="" href="#purine_pyrmidine_synthesis" shape="poly" coords="702,239,702,309,937,309,936,240" />
+<area alt="" title="" href="#quorum_sensing" shape="poly" coords="712,329,713,418,797,419,797,329" />
+<area alt="" title="" href="#tRna_synthesis" shape="poly" coords="804,341,806,419,934,419,932,341" />
+<area alt="" title="" href="#phenazine_synthesis" shape="poly" coords="825,506,825,564,933,565,931,506" />
+<area alt="" title="" href="#biomass_synthesis" shape="poly" coords="832,432,833,490,921,490,920,432" />
+<area alt="" title="" href="#vitamin_cofator_synthesis" shape="poly" coords="498,628,498,735,934,734,933,573,704,573,702,627" />
+<area alt="" title="" href="#unassigned" shape="poly" coords="313,593,314,732,482,732,479,593" />
+<area alt="" title="" href="#peptidoglycan_synthesis" shape="poly" coords="256,578,256,732,306,731,306,577" />
+<area alt="" title="" href="#lipopolysacharide_synthesis" shape="poly" coords="49,478,49,728,250,728,250,478" />
+
+
+
+    <area alt="" title="" href="#simple_compound_transp" shape="poly" coords="942,335,942,728,990,727,990,336" />
+	<area alt="" title="" href="#tca_intermediate_transp" shape="poly" coords="688,19,688,50,822,50,821,18" />
+    <area alt="" title="" href="#sugar_transp" shape="poly" coords="360,11,361,55,545,55,545,11" />
+    <area alt="" title="" href="#unassigned_transp" shape="poly" coords="3,430,2,732,42,731,41,431" />

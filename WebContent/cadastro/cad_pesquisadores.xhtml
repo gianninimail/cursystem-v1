@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/template.xhtml">
+
+
+	<ui:define name="cabecalho">
+		<ui:include src="/includes/cabecalho.xhtml" />
+	</ui:define>
+	
+	<ui:define name="menu">
+	    <ui:include src="/includes/menu.xhtml" />
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		
+		<h:form id="f">
+		    
+		    <p:dataTable id="tblPesquisadores" emptyMessage="No records found." 
+		    		var="pesquisador" value="#{pesquisadorBean.pesquisadores}" 
+		    		paginator="true" rows="12" paginatorAlwaysVisible="false" paginatorPosition="bottom">
+			    
+			    <f:facet name="header">List of researchers</f:facet>
+			    
+			    <p:column headerText="Id" width="20">
+			        <p:outputLabel value="#{pesquisador.id}" />
+			    </p:column>
+			 
+			    <p:column headerText="Name" width="auto">
+			        <p:outputLabel value="#{pesquisador.nome}" />
+			    </p:column>
+			    
+			    <p:column headerText="Project (Network Type)" width="auto">
+			        <p:outputLabel value="#{pesquisador.especialidade.nome}" />
+			    </p:column>
+			    
+			    <p:column headerText="E-mail" width="auto">
+			        <p:outputLabel value="#{pesquisador.email}" />
+			    </p:column>
+	
+			    <p:column headerText="Actions" width="60">
+			        
+			        <p:commandButton icon="ui-icon-trash" actionListener="#{pesquisadorBean.PrepararExcluir}" 
+			    	disabled="#{USUARIOLogado.tipoUsuario.id == 1 ? false : true}"
+			    	oncomplete="PF('dlgExcluirPesquisador').show();" 
+			    	update=":fExcluir:pgExcluir"/>
+			    	
+			    	<p:commandButton icon="ui-icon-pencil" actionListener="#{pesquisadorBean.PrepararEditar}" 
+			    	oncomplete="PF('dlgEditarPesquisador').show();" 
+			    	update=":fEditar:pgEditar"/>
+			    	
+			    </p:column>
+			    
+			    <f:facet name="footer">
+			    	<p:commandButton value="New" actionListener="#{pesquisadorBean.PrepararNovo}" 
+			    	oncomplete="PF('dlgNovoPesquisador').show();" 
+			    	disabled="#{USUARIOLogado.tipoUsuario.id == 1 ? false : true}"
+			    	update="fCadastrar:abas"/>
+			    </f:facet>
+			    
+			</p:dataTable>
+			
+		</h:form>
+		
+		<p:dialog header="New researcher" widgetVar="dlgNovoPesquisador" height="400"
+					modal="true" appendTo="@(body)"
+				  	draggable="false" resizable="false" closable="false" >
+		    
+		    <h:form id="fCadastrar">
+		    
+		    	<p:tabView id="abas" >
+		    		<p:ajax event="tabChange" listener="#{pesquisadorBean.onTabChange}" update="fCadastrar:abas" />
+        						        
+			        <p:tab id="abaNovo" title="New Researcher" >
+			            
+			            <h:panelGrid id="pgCadastrar" columns="2" >
+		    	
+					    	<p:outputLabel value="ID:" />
+							<p:outputLabel value="#{pesquisadorBean.pesquisador.id}"/>
+							
+							<p:outputLabel value="Name:"/>
+							<p:inputText id="nome" value="#{pesquisadorBean.pesquisador.nome}" style="width:230px" />
+							
+							<p:outputLabel value="Login:"/>
+							<p:inputText id="login" value="#{pesquisadorBean.pesquisador.login}" style="width:230px" />
+							
+					        <p:outputLabel for="pwd1" value="Password: *" />
+					        <p:password id="pwd1" value="#{pesquisadorBean.pesquisador.senha}" style="width:230px"  rendered="#{pesquisadorBean.ehNovoPesquisador}" label="Senha 1" match="pwd2" feedback="true" inline="true" promptLabel="Merge letters, numbers, and special characters." required="true" />
+					 
+					        <p:outputLabel for="pwd2" value="Confirm your Password: *" />
+					        <p:password id="pwd2" value="#{pesquisadorBean.pesquisador.senha}" style="width:230px"  rendered="#{pesquisadorBean.ehNovoPesquisador}" label="Senha 2" required="true" />
+			 					
+							<p:outputLabel value="TEL"/>
+							<p:inputMask id="tel" value="#{pesquisadorBean.pesquisador.tel}" mask="(99) 9999-99999" style="width:230px" />
+							
+							<p:outputLabel value="E-Mail"/>
+				            <p:inputText id="email" value="#{pesquisadorBean.pesquisador.email}" style="width:230px"  required="true" rendered="#{pesquisadorBean.ehNovoPesquisador}">
+				                <f:validator validatorId="validadorEmail" />
+				            </p:inputText>
+				            
+				            <p:outputLabel value="Institute:"/>
+							<p:inputText id="inst" value="#{pesquisadorBean.pesquisador.instituto}" style="width:230px" />
+			            
+			            	<p:outputLabel value="Project (Network Type):" />
+							<p:selectOneMenu id="esp" value="#{pesquisadorBean.pesquisador.especialidade}" converter="especialidadeConverter" style="width:230px" >
+					            <f:selectItem itemLabel="Select" itemValue="" />
+            					<f:selectItems value="#{especialidadeBean.especialidades}" var="esp" itemLabel="#{esp.nome}" itemValue="#{esp}" />
+					        </p:selectOneMenu>
+					        
+					        <p:outputLabel value="User Type:" />
+							<p:selectOneMenu id="tipoUser" value="#{pesquisadorBean.pesquisador.tipoUsuario}" converter="tipoUsuarioConverter" style="width:230px" >
+					            <f:selectItem itemLabel="Select" itemValue="" />
+            					<f:selectItems value="#{pesquisadorBean.listaTiposUsuarios}" var="tipoUser" itemLabel="#{tipoUser.nome}" itemValue="#{tipoUser}" />
+					        </p:selectOneMenu>
+				            
+				            <p:message for="email" display="tooltip" />
+						
+						</h:panelGrid>
+						
+						<h:panelGrid columns="2">
+							<p:commandButton value="Register" oncomplete="PF('dlgNovoPesquisador').hide();" 
+									actionListener="#{pesquisadorBean.CadastrarPesquisador}" 
+									update=":f:tblPesquisadores :msgGlobal" />
+						
+							<p:commandButton value="Cancel" onclick="PF('dlgNovoPesquisador').hide();" />
+		
+						</h:panelGrid>
+						
+			        </p:tab>
+			        
+			    </p:tabView>
+			    
+		    </h:form>
+		</p:dialog>
+		
+		<p:dialog header="Edit Researcher" widgetVar="dlgEditarPesquisador" height="340"
+					modal="true" appendTo="@(body)"
+				  	draggable="false" resizable="false" closable="false" >
+		    
+		    <h:form id="fEditar">
+		    	<h:panelGrid id="pgEditar" columns="2">
+		    	
+					<p:outputLabel value="ID:" />
+					<p:outputLabel value="#{pesquisadorBean.pesquisador.id}"/>
+					
+					<p:outputLabel value="Name:"/>
+					<p:inputText id="nome" value="#{pesquisadorBean.pesquisador.nome}" style="width:230px" />
+					
+					<p:outputLabel value="Login:"/>
+					<p:inputText id="login" value="#{pesquisadorBean.pesquisador.login}" style="width:230px" />
+					
+			        <p:outputLabel for="pwd1" value="Password: *" />
+			        <p:password id="pwd1" value="#{pesquisadorBean.pesquisador.senha}" style="width:230px"  rendered="#{pesquisadorBean.ehNovoPesquisador}" label="Senha 1" match="pwd2" feedback="true" inline="true" promptLabel="Merge letters, numbers, and special characters." required="true" />
+			 
+			        <p:outputLabel for="pwd2" value="Confirm your Password: *" />
+			        <p:password id="pwd2" value="#{pesquisadorBean.pesquisador.senha}" style="width:230px"  rendered="#{pesquisadorBean.ehNovoPesquisador}" label="Senha 2" required="true" />
+	 					
+					<p:outputLabel value="TEL"/>
+					<p:inputMask id="tel" value="#{pesquisadorBean.pesquisador.tel}" mask="(99) 9999-99999" style="width:230px" />
+					
+					<p:outputLabel value="E-Mail"/>
+		            <p:inputText id="email" value="#{pesquisadorBean.pesquisador.email}" style="width:230px"  required="true" rendered="#{pesquisadorBean.ehNovoPesquisador}">
+		                <f:validator validatorId="validadorEmail" />
+		            </p:inputText>
+		            
+		            <p:outputLabel value="Institute:"/>
+					<p:inputText id="inst" value="#{pesquisadorBean.pesquisador.instituto}" style="width:230px" />
+	            
+	            	<p:outputLabel value="Project (Network Type):" />
+					<p:selectOneMenu id="esp" value="#{pesquisadorBean.pesquisador.especialidade}" converter="especialidadeConverter" style="width:230px" >
+			            <f:selectItem itemLabel="Select" itemValue="" />
+          					<f:selectItems value="#{especialidadeBean.especialidades}" var="esp" itemLabel="#{esp.nome}" itemValue="#{esp}" />
+			        </p:selectOneMenu>
+			        
+			        <p:outputLabel value="User Type:" />
+					<p:selectOneMenu id="tipoUser" value="#{pesquisadorBean.pesquisador.tipoUsuario}" converter="tipoUsuarioConverter" style="width:230px" disabled="#{USUARIOLogado.tipoUsuario.id == 1 ? false : true}" >
+			            <f:selectItem itemLabel="Select" itemValue="" />
+          					<f:selectItems value="#{pesquisadorBean.listaTiposUsuarios}" var="tipoUser" itemLabel="#{tipoUser.nome}" itemValue="#{tipoUser}" />
+			        </p:selectOneMenu>
+		            
+		            <p:message for="email" display="tooltip" />
+				
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+					
+					<p:commandButton value="Register" oncomplete="PF('dlgEditarPesquisador').hide();" 
+							actionListener="#{pesquisadorBean.EditarPesquisador}" 
+							update=":f:tblPesquisadores :msgGlobal" />
+					
+					<p:commandButton value="Cancel" onclick="PF('dlgEditarPesquisador').hide();" />
+
+				</h:panelGrid>
+		    </h:form>
+		</p:dialog> 
+		
+		<p:dialog header="Excluir Pesquisador" widgetVar="dlgExcluirPesquisador" height="90"
+					modal="true" appendTo="@(body)"
+				  	draggable="false" resizable="false" closable="false" >
+		    
+		    <h:form id="fExcluir">
+		    	
+		    	<h:panelGrid id="pgExcluir" columns="2">
+			    	<p:outputLabel value="ID:"/>
+					<p:outputLabel value="#{pesquisadorBean.pesquisador.id}"/>
+					
+					<p:outputLabel value="Nome:"/>
+					<p:outputLabel id="nome" value="#{pesquisadorBean.pesquisador.nome}"/>
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir" oncomplete="PF('dlgExcluirPesquisador').hide();" 
+							actionListener="#{pesquisadorBean.ExcluirPesquisador}" 
+							update=":f:tblPesquisadores :msgGlobal" />
+					
+					<p:commandButton value="Cancelar" onclick="PF('dlgExcluirPesquisador').hide();" />
+				</h:panelGrid>
+				
+		    </h:form>
+		    
+		</p:dialog> 	
+	
+	</ui:define>
+	
+	<ui:define name="rodape">
+	    <ui:include src="/includes/rodape.xhtml" />
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	template="/templates/template.xhtml">
+
+
+	<ui:define name="cabecalho">
+		<ui:include src="/includes/cabecalho.xhtml" />
+	</ui:define>
+	
+	<ui:define name="menu">
+	    <ui:include src="/includes/menu.xhtml" />
+	</ui:define>
+	
+	<ui:define name="conteudo">
+		<map name="mapa" id="mapa">
+		    <area alt="Phospholipd Synthesis" title="Phospholipd Synthesis" href="phospholipd_synthesis.jsf?id=7" shape="poly" coords="117,418,212,419,213,468,117,466" />
+			<area alt="Amino Acid Catabolism" title="Amino Acid Catabolism" href="amino_acido_catabolismo.jsf?id=1" shape="poly" coords="168,91,168,334,380,335,380,257,340,256,340,182,359,163,358,92" />
+			<area alt="Fatty Acid Synthesis" title="Fatty Acid Synthesis" href="fatty_acid_synthesis.jsf?id=7" shape="poly" coords="256,400,254,564,386,563,386,437,350,436,317,401" />
+			<area alt="Sugar Catabolism" title="Sugar Catabolism" href="sugar_catabolism.jsf?id=1" shape="poly" coords="345,184,346,251,390,251,389,228,448,170,446,136,396,134" />
+			<area alt="Metabolism Central" title="Metabolism Central" href="metabolism_central.jsf?id=4" shape="poly" coords="396,232,391,561,513,561,515,475,483,423,485,274,517,264,516,175,450,175" />
+			<area alt="Amino Acid Synthesis" title="Amino Acid Synthesis" href="amino_acido_synthesis.jsf?id=2" shape="poly" coords="522,231,522,267,490,278,490,422,519,473,520,609,696,610,694,231" />
+			<area alt="Nitrogen Metabolism" title="Nitrogen Metabolism" href="nitrogen_metabolism.jsf?id=5" shape="poly" coords="561,66,560,114,681,112,680,68" />
+			<area alt="Energy Metabolism" title="Energy Metabolism" href="energy_metabolism.jsf?id=5" shape="poly" coords="553,133,553,213,699,211,698,134" />
+			<area alt="Energy Metabolism Ext" title="Energy Metabolism Ext" href="energy_metabolism_ext.jsf" shape="poly" coords="552,132,553,212,701,212,699,192,743,193,743,144,699,143,697,132" />
+			<area alt="Nucleotide Salvage Pathway" title="Nucleotide Salvage Pathway" href="nucleotide_salvage_pathway.jsf?id=8" shape="poly" coords="748,76,748,218,912,217,911,76" />
+			<area alt="Purine and Pyrmidine Synthesis" title="Purine and Pyrmidine Synthesis" href="purine_pyrmidine_synthesis.jsf?id=9" shape="poly" coords="702,239,702,309,937,309,936,240" />
+			<area alt="Quorum Sensing" title="Quorum Sensing" href="quorum_sensing.jsf?id=16" shape="poly" coords="712,329,713,418,797,419,797,329" />
+			<area alt="tRNA Synthesis" title="tRNA Synthesis" href="trna_synthesis.jsf?id=14" shape="poly" coords="804,341,806,419,934,419,932,341" />
+			<area alt="Phenazine Synthesis" title="Phenazine Synthesis" href="phenazine_synthesis.jsf?id=16" shape="poly" coords="825,506,825,564,933,565,931,506" />
+			<area alt="Biomass Synthesis" title="Biomass Synthesis" href="biomass_synthesis.jsf?id=00" shape="poly" coords="832,432,833,490,921,490,920,432" />
+			<area alt="Vitamin and Cofactor Synthesis" title="Vitamin and Cofactor Synthesis" href="vitamin_cofactor_synthesis.jsf?id=17" shape="poly" coords="498,628,498,735,934,734,933,573,704,573,702,627" />
+			<area alt="Unassigned" title="Unassigned" href="unassigned.jsf?id=15" shape="poly" coords="313,593,314,732,482,732,479,593" />
+			<area alt="Peptidoglycan Synthesis" title="Peptidoglycan Synthesis" href="peptidoglycan_synthesis.jsf?id=3" shape="poly" coords="256,578,256,732,306,731,306,577" />
+			<area alt="Lipopolysacharide Synthesis" title="Lipopolysacharide Synthesis" href="lipopolysacharide_synthesis.jsf?id=3" shape="poly" coords="49,478,49,728,250,728,250,478" />
+		</map>
+		<img id="grafo" src="../resources/imagens/metabolismo-web-org2.jpg" usemap="#mapa" />	
+	</ui:define>
+	
+	<ui:define name="rodape">
+	    <ui:include src="/includes/rodape.xhtml" />
+	</ui:define>
+
+</ui:composition>
